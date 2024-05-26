@@ -1,0 +1,26 @@
+{
+    "retrieval-text": {
+        "root": "mm_niah/images",
+        "annotation": "mm_niah/annotations/retrieval-text.jsonl"
+    },
+    "retrieval-image": {
+        "root": "mm_niah/images",
+        "annotation": "mm_niah/annotations/retrieval-image.jsonl"
+    },
+    "counting-text": {
+        "root": "mm_niah/images",
+        "annotation": "mm_niah/annotations/counting-text-easy.jsonl"
+    },
+    "counting-image": {
+        "root": "mm_niah/images",
+        "annotation": "mm_niah/annotations/counting-image-easy.jsonl"
+    },
+    "reasoning-text": {
+        "root": "mm_niah/images",
+        "annotation": "mm_niah/annotations/reasoning-text.jsonl"
+    },
+    "reasoning-image": {
+        "root": "mm_niah/images",
+        "annotation": "mm_niah/annotations/reasoning-image.jsonl"
+    }
+}
