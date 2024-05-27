@@ -1,9 +1,9 @@
 #!/bin/bash
 
-PARTITION=${PARTITION:-"llm_s"}
+PARTITION=${PARTITION:-"Intern5"}
 GPUS=${GPUS:-64}
 GPUS_PER_NODE=${GPUS_PER_NODE:-8}
-GPUS_PER_TASK=${GPUS_PER_TASK:-4}
+GPUS_PER_TASK=${GPUS_PER_TASK:-8}
 QUOTA_TYPE=${QUOTA_TYPE:-"reserved"}
 
 # 常量路径
@@ -39,12 +39,14 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
             --ntasks-per-node=$((GPUS_PER_NODE / GPUS_PER_TASK)) \
             --quotatype=${QUOTA_TYPE} \
             --job-name="eval_${model_name}_${task}" \
+            -o "${LOG_DIR}/${model_name}_${task}.log" \
+            -e "${LOG_DIR}/${model_name}_${task}.log" \
+            --async \
             python -u eval_internvl.py \
             --model-path $model_path \
             --task $task \
             --outputs-dir $OUTPUTS_DIR \
             --num-gpus-per-rank ${GPUS_PER_TASK} \
-            2>&1 | tee -a "${LOG_DIR}/${model_name}_${task}.log"
 
         cat ${OUTPUTS_DIR}/temp_${model_name}_${task}/* > ${OUTPUTS_DIR}/${model_name}_${task}.jsonl
     done
