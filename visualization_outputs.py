@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 from utils.tools import VQAEval
 
-x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 48000, 64000, 80000, 96000, 128000]
+x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
+# x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 48000, 64000, 80000, 96000, 128000]
 # x_bins = [1000, 2000, 3000, 5000, 9000, 15000, 26000, 44000, 75000]
 y_interval = 0.2
 vqa = VQAEval()
@@ -40,16 +41,21 @@ def is_correct(answer, response):
             print(f"Fail to parse {response_orig} Exception: {e}")
             return 0
 
+        if not isinstance(response, list):
+            print(f"Fail to parse {response_orig} Exception: not a list!")
+            return 0
+
         match = 0
         for res, ans in zip(response, answer):
             match += res == ans
-        return match / len(ans)
+        return match / len(answer)
 
     return vqa.evaluate(response, answer)
 
 def main(args):
     os.makedirs(args.save_dir, exist_ok=True)
-    os.makedirs(f'{args.save_dir}_details', exist_ok=True)
+    os.makedirs(f'{args.save_dir}_pdf', exist_ok=True)
+    os.makedirs(f'{args.save_dir}_txt', exist_ok=True)
 
     result_path_list = os.listdir(args.outputs_dir)
     for file_name in result_path_list:
@@ -58,8 +64,8 @@ def main(args):
 
         jsonl_file_path = os.path.join(args.outputs_dir, file_name)
         file_path = os.path.join(args.save_dir, file_name.replace('.jsonl', '.png'))
-        file_path_pdf = os.path.join(f'{args.save_dir}_details', file_name.replace('.jsonl', '.pdf'))
-        file_path_txt = os.path.join(f'{args.save_dir}_details', file_name.replace('.jsonl', '.txt'))
+        file_path_pdf = os.path.join(f'{args.save_dir}_pdf', file_name.replace('.jsonl', '.pdf'))
+        file_path_txt = os.path.join(f'{args.save_dir}_txt', file_name.replace('.jsonl', '.txt'))
 
         if os.path.isdir(jsonl_file_path):
             continue
@@ -79,6 +85,9 @@ def main(args):
 
                 z = entry['response']
                 answer = entry['answer']
+
+                if 'counting' in jsonl_file_path:
+                    answer = json.loads(answer)
 
                 x_index = np.digitize(x, x_bins)
                 y_index = int(y / y_interval)
@@ -107,7 +116,7 @@ def main(args):
         ax = sns.heatmap(uniform_data, vmin=0, vmax=1, cmap=cm)
 
         plt.xticks(ticks=np.arange(uniform_data.shape[1])+0.5, labels=[f'{i / 1000}k' for i in x_bins])
-        plt.xticks(rotation=90)
+        plt.xticks(rotation=45)
 
         plt.yticks(ticks=np.arange(uniform_data.shape[0]), labels=[f'{j / (1/y_interval)}' for j in range(int(1/y_interval))])
         plt.yticks(rotation=0)

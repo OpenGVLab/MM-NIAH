@@ -30,12 +30,14 @@ CONV_TEMPLATE = {
     'llava-v1.5-13b': 'vicuna_v1',
     'llava-v1.6-vicuna-13b': 'vicuna_v1',
     'llava-v1.6-34b': 'chatml_direct',
+    'llava-next-110b': 'qwen_1_5',
     'VILA1.0-13b-llava': 'vicuna_v1',
 }
 NUM_HIDDEN_LAYERS = {
     'llava-v1.5-13b': 40,
     'llava-v1.6-vicuna-13b': 40,
     'llava-v1.6-34b': 60,
+    'llava-next-110b': 80,
     'VILA1.0-13b-llava': 40,
 }
 
