@@ -11,8 +11,7 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 from torchvision.transforms.functional import InterpolationMode
 
-from utils.rag import rag
-from utils.tools import get_input
+from utils.tools import get_input, init_dist
 
 from petrel_client.client import Client
 client = Client()
@@ -168,7 +167,7 @@ def chat(
     IMG_END_TOKEN='</img>',
     IMG_CONTEXT_TOKEN='<IMG_CONTEXT>',
 ):
-    assert len(pixel_values) == sum(num_patches_list)
+    assert pixel_values is None or len(pixel_values) == sum(num_patches_list)
 
     img_context_token_id = tokenizer.convert_tokens_to_ids(IMG_CONTEXT_TOKEN)
     model.img_context_token_id = img_context_token_id
@@ -183,7 +182,7 @@ def chat(
     if history is None:
         history = []
         for num_patches in num_patches_list:
-            assert '<image>' in question
+            assert pixel_values is None or '<image>' in question
             image_tokens = IMG_START_TOKEN + IMG_CONTEXT_TOKEN * model.num_image_token * num_patches + IMG_END_TOKEN
             question = question.replace('<image>', image_tokens, 1)
     else:
@@ -198,9 +197,14 @@ def chat(
     attention_mask = model_inputs['attention_mask'].cuda()
     generation_config['eos_token_id'] = eos_token_id
 
-    print(f'dynamic ViT batch size: {pixel_values.size(0)}, input_ids: {input_ids.shape}')
+    if pixel_values is None:
+        print(f'dynamic ViT batch size: None, input_ids: {input_ids.shape}')
+    else:
+        print(f'dynamic ViT batch size: {pixel_values.size(0)}, input_ids: {input_ids.shape}')
+        pixel_values = pixel_values.to(torch.bfloat16).cuda()
+
     generation_output = model.generate(
-        pixel_values=pixel_values.to(torch.bfloat16),
+        pixel_values=pixel_values,
         input_ids=input_ids,
         attention_mask=attention_mask,
         **generation_config
@@ -211,34 +215,6 @@ def chat(
     if return_history:
         return response, history
     return response
-
-
-def init_dist(args):
-    num_gpus = torch.cuda.device_count()
-    args.rank = int(os.getenv('SLURM_PROCID', '0'))
-    args.local_rank = args.rank % (num_gpus // args.num_gpus_per_rank)
-    args.world_size = int(os.getenv('SLURM_NTASKS', '1'))
-    args.local_world_size = num_gpus // args.num_gpus_per_rank
-
-    os.environ['RANK'] = str(args.rank)
-    os.environ['LOCAL_RANK'] = str(args.local_rank)
-    os.environ['WORLD_SIZE'] = str(args.world_size)
-    os.environ['LOCAL_WORLD_SIZE'] = str(args.local_world_size)
-
-    if 'MASTER_ADDR' not in os.environ:
-        node_list = os.environ["SLURM_NODELIST"]
-        addr = subprocess.getoutput(f"scontrol show hostname {node_list} | head -n1")
-        os.environ['MASTER_ADDR'] = addr
-    if 'MASTER_PORT' not in os.environ:
-        os.environ['MASTER_PORT'] = '22110'
-
-    torch.distributed.init_process_group(
-        backend='nccl',
-        init_method='env://',
-        rank=args.rank,
-        world_size=args.world_size,
-    )
-    torch.cuda.set_device(args.local_rank)
 
 
 def main(args):
@@ -301,16 +277,20 @@ def main(args):
         ]
 
         if args.use_rag:
+            from utils.rag import rag
             context, images_list = rag(context, images_list, question, 3000)
         qs = f'{context}\n{question}'
 
-        pixel_values = []
-        num_patches_list = []
-        for img in images_list:
-            curr_pixel_values = load_image(img, dynamic_image_size=False)
-            pixel_values.append(curr_pixel_values)
-            num_patches_list.append(len(curr_pixel_values))
-        pixel_values = torch.cat(pixel_values)
+        if len(images_list) > 0:
+            pixel_values = []
+            num_patches_list = []
+            for img in images_list:
+                curr_pixel_values = load_image(img, dynamic_image_size=False)
+                pixel_values.append(curr_pixel_values)
+                num_patches_list.append(len(curr_pixel_values))
+            pixel_values = torch.cat(pixel_values)
+        else:
+            pixel_values = None
 
         try:
             outputs = chat(

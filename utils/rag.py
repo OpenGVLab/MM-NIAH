@@ -1,7 +1,11 @@
 import re
+import io
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
 from sklearn.metrics.pairwise import cosine_similarity
+
+from petrel_client.client import Client
+client = Client()
 
 model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -11,14 +15,24 @@ def encode_text(texts):
     outputs = model.get_text_features(**inputs)
     return outputs
 
+def load_image(image_file):
+    if 's3:' in image_file:
+        data_bytes = client.get(image_file)
+        assert data_bytes is not None, f'fail to load {image_file}'
+        data_buff = io.BytesIO(data_bytes)
+        image = Image.open(data_buff).convert('RGB')
+    else:
+        image = Image.open(image_file).convert('RGB')
+    return image
+
 def encode_images(images):
-    pil_images = [Image.open(image_path) for image_path in images]
+    pil_images = [load_image(image_path) for image_path in images]
     inputs = processor(images=pil_images, return_tensors="pt")
     outputs = model.get_image_features(**inputs)
     return outputs
 
 def split_text(text, max_length=200):
-    sentences = re.split(r'(?<=[。！？])', text)
+    sentences = re.split(r'(?<=[.!?])', text)
     chunks = []
     current_chunk = ""
     current_length = 0
