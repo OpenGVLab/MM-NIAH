@@ -116,21 +116,24 @@ def build_model(args):
         device_map = {}
         config = AutoConfig.from_pretrained(args.model_path, trust_remote_code=True)
 
+        num_gpus_for_vit = 1
+        num_gpus_for_llm = len(visible_devices) - num_gpus_for_vit
+
         num_layers = config.llm_config.num_hidden_layers
-        num_layers_per_gpu = num_layers // num_gpus
+        num_layers_per_gpu = num_layers // num_gpus_for_llm
         for i in range(num_layers):
-            device_idx = min(i // num_layers_per_gpu + len(visible_devices) // 2, len(visible_devices) - 1)
+            device_idx = min(i // num_layers_per_gpu + num_gpus_for_vit, len(visible_devices) - 1)
             device_map[f'language_model.model.layers.{i}'] = visible_devices[device_idx]
 
         num_layers = config.vision_config.num_hidden_layers
-        num_layers_per_gpu = num_layers // num_gpus
+        num_layers_per_gpu = num_layers // num_gpus_for_vit
         for i in range(num_layers):
-            device_idx = min(i // num_layers_per_gpu, len(visible_devices) // 2 - 1)
+            device_idx = min(i // num_layers_per_gpu, num_gpus_for_vit - 1)
             device_map[f'vision_model.encoder.layers.{i}'] = visible_devices[device_idx]
 
         device_map['vision_model.embeddings'] = 0
-        device_map['mlp1'] = len(visible_devices) // 2
-        device_map['language_model.model.tok_embeddings'] = len(visible_devices) // 2
+        device_map['mlp1'] = num_gpus_for_vit - 1
+        device_map['language_model.model.tok_embeddings'] = num_gpus_for_vit
         device_map['language_model.model.norm'] = visible_devices[-1]
         device_map['language_model.output'] = visible_devices[-1]
 

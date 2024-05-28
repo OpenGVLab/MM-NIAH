@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# OUTPUTS_DIR="outputs_v1_${GPUS}"
-OUTPUTS_DIR="outputs_v1_paper_v2_bak"
+OUTPUTS_DIR=$1
 
 # 循环不同的数据集和答案文件
 declare -a model_paths=( \

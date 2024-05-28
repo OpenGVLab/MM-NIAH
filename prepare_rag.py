@@ -132,7 +132,7 @@ def get_rag_context(model, tokenizer, image_processor, question, context, images
             scores.append(images_sim.pop(0))
         else:
             scores.append(texts_sim.pop(0))
-    assert len(texts_sim) == 0 and len(images_sim) == 0
+    assert len(texts_sim) == 0 and len(images_sim) == 0, f"{len(texts_sim)=}, {len(images_sim)=}"
 
     num_tokens = 0
     flag = [False] * len(texts_splitted)
@@ -197,7 +197,8 @@ def main(args):
         context = context.replace('</s>', '')
 
         images_list = sample['images_list']
-        if '<image>' in sample['question']:
+        num_images = question.count('<image>')
+        for _ in range(num_images):
             images_list.pop(-1)
 
         # TODO: rm
