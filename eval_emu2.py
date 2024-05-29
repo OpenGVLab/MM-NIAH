@@ -8,7 +8,7 @@ import torchvision.transforms as T
 
 from PIL import Image
 from tqdm import tqdm
-from transformers import AutoTokenizer, AutoModel, AutoConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 from torchvision.transforms.functional import InterpolationMode
 
 from utils.tools import get_input, init_dist
@@ -56,7 +56,7 @@ def build_model(args):
             device_idx = min(i // num_layers_per_gpu + num_gpus_for_vit, len(visible_devices) - 1)
             device_map[f'model.decoder.lm.model.layers.{i}'] = visible_devices[device_idx]
 
-        num_layers = config.vision_config.num_hidden_layers
+        num_layers = config.vision_config['layers']
         num_layers_per_gpu = num_layers // num_gpus_for_vit
         for i in range(num_layers):
             device_idx = min(i // num_layers_per_gpu, num_gpus_for_vit - 1)
@@ -67,7 +67,7 @@ def build_model(args):
         device_map['model.visual.cls_token'] = 0
         device_map['project_down.weight'] = num_gpus_for_vit - 1
         device_map['project_up.weight'] = num_gpus_for_vit - 1
-        device_map['model.decoder.lm.model.embed_tokens.weight'] = num_gpus_for_vit
+        device_map['model.decoder.lm.model.embed_tokens.weight'] = visible_devices[-1]
         device_map['model.decoder.lm.model.norm.weight'] = visible_devices[-1]
         device_map['model.decoder.lm.lm_head.weight'] = visible_devices[-1]
 
@@ -78,7 +78,7 @@ def build_model(args):
         for k, v in device_map.items():
             print(k, v)
 
-    model = AutoModel.from_pretrained(
+    model = AutoModelForCausalLM.from_pretrained(
         args.model_path,
         torch_dtype=torch.bfloat16,
         low_cpu_mem_usage=True,
@@ -154,6 +154,7 @@ def main(args):
             from utils.rag import rag
             context, images_list = rag(context, images_list, question, 3000)
         qs = f'{context}\n{question}'
+        qs = qs.replace('<image>', '[<IMG_PLH>]')
 
         inputs = model.build_input_ids(
             text=[qs],
@@ -170,6 +171,7 @@ def main(args):
                 num_beams=1,
                 max_new_tokens=64 if 'counting' in task else 32,
             )
+            outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
             oom_cnt = 0
         except torch.cuda.OutOfMemoryError:
             print(f"Rank {args.rank} OutOfMemoryError occurs! totoal_tokens={sample['meta']['context_length']}")
