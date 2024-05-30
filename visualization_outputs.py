@@ -36,7 +36,10 @@ def is_correct(answer, response):
 
     if isinstance(answer, list):
         try:
+            response = response.replace('json', '').strip()
             response = json.loads(response)
+            if isinstance(response, dict):
+                response = sum(list(response.values()), start=[])
         except Exception as e:
             print(f"Fail to parse {response_orig} Exception: {e}")
             return 0
@@ -132,7 +135,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Visualization script for outputs")
-    parser.add_argument('--outputs-dir', type=str, default='')
+    parser.add_argument('--outputs-dir', type=str, default='outputs_v1_64')
     args = parser.parse_args()
 
     args.save_dir = os.path.join(args.outputs_dir, 'visualization')
