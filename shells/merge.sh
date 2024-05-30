@@ -9,6 +9,7 @@ declare -a model_paths=( \
     'ckpts/Efficient-Large-Model/VILA1.0-13b-llava' \
     'ckpts/liuhaotian/llava-v1.6-34b' \
     'ckpts/OpenGVLab/InternVL-Chat-V1-5' \
+    'ckpts/BAAI/Emu2-Chat' \
 )
 
 declare -a tasks=( \

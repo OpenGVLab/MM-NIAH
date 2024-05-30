@@ -102,7 +102,7 @@ def encode(model, tokenizer, image_processor, question, texts, images):
     return logits_per_text[0], logits_per_image[0]
 
 
-def get_rag_context(model, tokenizer, image_processor, question, context, images, max_context_length=8192):
+def get_rag_context(args, model, tokenizer, image_processor, question, context, images, max_context_length=8192):
     texts = context.split('<image>')
     texts_splitted = []
     for t in texts:
@@ -114,13 +114,24 @@ def get_rag_context(model, tokenizer, image_processor, question, context, images
     # assert sum([t == '<image>' for t in texts_splitted]) == context.count('<image>'), f"{len(texts_splitted)}, {context.count('<image>')}"
     assert ''.join(texts_splitted) == context
 
+    # TODO: rm
+    images_list = [i for i in images]
+    images_list = [
+        os.path.join('s3://public-dataset/OBELISC/raw-images', i[len('obelisc/'):]) if i.startswith('obelisc/') else i
+        for i in images_list
+    ]
+    images_list = [
+        os.path.join(args.image_folder, i) if 's3://' not in i else i
+        for i in images_list
+    ]
+
     texts_sim, images_sim = encode(
         model=model,
         tokenizer=tokenizer,
         image_processor=image_processor,
         question=question,
         texts=texts_splitted,
-        images=load_images(images),
+        images=load_images(images_list),
     )
 
     scores = []
@@ -164,6 +175,8 @@ def get_rag_context(model, tokenizer, image_processor, question, context, images
     assert img_idx == len(images)
 
     new_context = ''.join(new_context)
+    assert len(new_images_list) == new_context.count('<image>')
+
     return new_context, new_images_list
 
 
@@ -193,32 +206,27 @@ def main(args):
     outputs = []
     for sample in tqdm(lines, desc=f"Processing {ans_file_name}", disable=args.rank!=0):
         sample_with_rag = sample.copy()
-        context, images_list, question, answer = get_input(sample)
-        context = context.replace('</s>', '')
+        context = sample['context'].replace('</s>', '')
+        question = sample['question']
+        images_list = sample['images_list'].copy()
 
-        images_list = sample['images_list']
         num_images = question.count('<image>')
-        for _ in range(num_images):
-            images_list.pop(-1)
-
-        # TODO: rm
-        images_list = [
-            os.path.join('s3://public-dataset/OBELISC/raw-images', i[len('obelisc/'):]) if i.startswith('obelisc/') else i
-            for i in images_list
-        ]
-        images_list = [
-            os.path.join(args.image_folder, i) if 's3://' not in i else i
-            for i in images_list
-        ]
+        if num_images > 0:
+            redundant_images_list = images_list[-num_images:]
+            images_list = images_list[:-num_images]
+        else:
+            redundant_images_list = []
 
         new_context, new_images_list = get_rag_context(
+            args=args,
             model=model,
             tokenizer=tokenizer,
             image_processor=image_processor,
-            question=sample['question'],
+            question=question,
             context=context,
             images=images_list,
         )
+        new_images_list.extend(redundant_images_list)
         sample_with_rag['context'] = new_context
         sample_with_rag['images_list'] = new_images_list
 

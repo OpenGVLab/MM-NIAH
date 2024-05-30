@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 
 from utils.tools import VQAEval
 
-x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
-# x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 48000, 64000, 80000, 96000, 128000]
+x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000]
+# x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
 # x_bins = [1000, 2000, 3000, 5000, 9000, 15000, 26000, 44000, 75000]
 y_interval = 0.2
 vqa = VQAEval()
@@ -86,7 +86,7 @@ def main(args):
                 z = entry['response']
                 answer = entry['answer']
 
-                if 'counting' in jsonl_file_path:
+                if 'counting' in jsonl_file_path and not isinstance(answer, list):
                     answer = json.loads(answer)
 
                 x_index = np.digitize(x, x_bins)
