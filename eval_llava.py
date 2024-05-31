@@ -219,8 +219,8 @@ def main(args):
             "question": question,
             "answer": sample['answer'],
             "response": outputs,
-            'total_tokens':sample['meta']['context_length'],
-            'position':sample['meta']['placed_depth']
+            'total_tokens': sample['meta']['context_length'],
+            'position': sample['meta']['placed_depth'],
         }) + "\n")
         ans_file.flush()
 
