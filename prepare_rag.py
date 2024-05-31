@@ -102,7 +102,10 @@ def encode(model, tokenizer, image_processor, question, texts, images):
     return logits_per_text[0], logits_per_image[0]
 
 
-def get_rag_context(args, model, tokenizer, image_processor, question, context, images, max_context_length=8192):
+def get_rag_context(args, model, tokenizer, image_processor, question, context, images):
+    min_num_images = args.min_num_images
+    max_context_length = args.max_context_length
+
     texts = context.split('<image>')
     texts_splitted = []
     for t in texts:
@@ -145,19 +148,24 @@ def get_rag_context(args, model, tokenizer, image_processor, question, context, 
             scores.append(texts_sim.pop(0))
     assert len(texts_sim) == 0 and len(images_sim) == 0, f"{len(texts_sim)=}, {len(images_sim)=}"
 
+    num_images = 0
     num_tokens = 0
     flag = [False] * len(texts_splitted)
     sorted_idx = np.argsort(scores).tolist()[::-1]
 
     for i in sorted_idx:
+        if num_tokens >= max_context_length and num_images >= min_num_images:
+            break
+
+        if num_tokens >= max_context_length and texts_splitted[i] != '<image>':
+            continue
+
         flag[i] = True
         if texts_splitted[i] == '<image>':
+            num_images += 1
             num_tokens += 256
         else:
             num_tokens += len(tokenizer(texts_splitted[i]).input_ids) - 1
-
-        if num_tokens >= max_context_length:
-            break
 
     img_idx = 0
     new_context = []
@@ -251,6 +259,8 @@ if __name__ == "__main__":
     parser.add_argument('--task', type=str, default='')
     parser.add_argument('--outputs-dir', type=str, default='')
     parser.add_argument('--num-gpus-per-rank', type=int, default=1)
+    parser.add_argument('--max-context-length', type=int, default=8192)
+    parser.add_argument('--min-num-images', type=int, default=0)
     args = parser.parse_args()
 
     with open(FILEPATH) as file:
