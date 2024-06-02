@@ -116,14 +116,26 @@ def main(args):
 
     with open(args.question_file, 'r') as file:
         lines = file.readlines()
-    ans_file = open(ans_file_path, 'w')
 
+    skip_idx = set()
+    if os.path.exists(ans_file_path):
+        with open(ans_file_path) as file:
+            ans_lines = file.readlines()
+
+        for ans_line in ans_lines:
+            skip_idx.add(json.loads(ans_line)['question_id'])
+
+    ans_file = open(ans_file_path, 'a')
     lines = lines[args.rank::args.world_size]
     lines = [json.loads(line) for line in lines]
     lines = sorted(lines, key=lambda x:x['meta']['context_length'])
 
     oom_cnt = 0
+    print(f'Rank {args.rank} {len(skip_idx)=}')
     for sample in tqdm(lines, desc=f"Processing {ans_file_name}", disable=args.rank!=0):
+        if sample['id'] in skip_idx:
+            continue
+
         context, images_list, question, answer = get_input(sample)
         context = context.replace('</s>', '')
 
@@ -191,6 +203,7 @@ def main(args):
             'position':sample['meta']['placed_depth']
         }) + "\n")
         ans_file.flush()
+        skip_idx.add(sample['id'])
 
     print(f"Rank {args.rank} Finish")
     ans_file.close()

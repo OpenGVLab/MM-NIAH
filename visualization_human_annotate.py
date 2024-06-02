@@ -78,7 +78,7 @@ def image_to_mdstring(image):
     img_str = base64.b64encode(buffered.getvalue()).decode()
     return f"![image](data:image/jpeg;base64,{img_str})"
 
-def process_item(item):
+def process_item(item, num_lines=0, total_lines=0):
     image_dir = item['image_dir']
     images_list = item['images_list']
     context = item['context']
@@ -145,6 +145,7 @@ def process_item(item):
         answer = json.dumps(answer)
 
     md_str = [
+        f'Annotation Progress: {num_lines}/{total_lines}',
         '## Meta Info',
         *[f'{k}={meta.get(k, err_info)}' for k in key_list],
         f"num_images={len(images_list)=}",
@@ -194,7 +195,7 @@ def gradio_app_vis_incontext_trainset(_filepath):
 
         if not os.path.exists(save_path):
             # return list(all_id)
-            return 0
+            return 0, 0
 
         with open(save_path) as file:
             lines = file.readlines()
@@ -231,7 +232,7 @@ def gradio_app_vis_incontext_trainset(_filepath):
             if state_new[x_index][y_index] == 0:
                 break
 
-        return ann_id
+        return ann_id, len(lines)
 
     def load_and_collate_annotations(ann_filename):
         dataset = InterleavedDataset(_filepath[ann_filename])
@@ -245,13 +246,15 @@ def gradio_app_vis_incontext_trainset(_filepath):
             user_state['previous_ann_id'] = ann_id
 
         if not force_ann_id:
-            ann_id = get_id_without_answer(user_state, ann_filename)
+            ann_id, num_lines = get_id_without_answer(user_state, ann_filename)
+        else:
+            _, num_lines = get_id_without_answer(user_state, ann_filename)
 
         if 'previous_ann_id' not in user_state:
             user_state['previous_ann_id'] = ann_id
 
         item = user_state[ann_filename][ann_id]
-        md_annotation = process_item(item)
+        md_annotation = process_item(item, num_lines=num_lines, total_lines=len(user_state[ann_filename]))
         return ann_filename, ann_id, md_annotation, user_input
 
     def when_btn_previous_click(user_state, ann_filename, ann_id, annotation, user_input):
@@ -269,8 +272,8 @@ def gradio_app_vis_incontext_trainset(_filepath):
         ann_filename = gr.Radio(list(_filepath.keys()), value=None)
         with gr.Row():
             ann_id = gr.Number(0, interactive=False)
-            btn_next = gr.Button("Next")
             btn_previous = gr.Button("Previous")
+            btn_next = gr.Button("Next")
             btn_input = gr.Text()
         annotation = gr.Markdown()
 
