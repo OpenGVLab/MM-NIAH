@@ -26,7 +26,8 @@ SAVEPATH = 'outputs_human'
 os.makedirs(SAVEPATH, exist_ok=True)
 
 client = Client()
-x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
+# x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
+x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000]
 y_interval = 0.2
 
 class InterleavedDataset:
@@ -117,6 +118,7 @@ def process_item(item, num_lines=0, total_lines=0):
             answer = str(answer)
 
     # needles
+    needle_info = ''
     for needle in needles:
         if isinstance(needle, int):
             continue
@@ -125,7 +127,7 @@ def process_item(item, num_lines=0, total_lines=0):
             context = context.replace(needle, f' `{needle}` ')
         else:  # 图像针
             # assert os.path.exists(os.path.join(image_dir, needle)), os.path.join(image_dir, needle)
-            pass
+            needle_info = f'{needle_info}\n{image_to_mdstring(os.path.join(image_dir, needle))}'
 
     # choices
     if choices:
@@ -149,6 +151,7 @@ def process_item(item, num_lines=0, total_lines=0):
         '## Meta Info',
         *[f'{k}={meta.get(k, err_info)}' for k in key_list],
         f"num_images={len(images_list)=}",
+        '## Needle Info', needle_info,
         '## Question', question,
         '## Context', context,
         # '## Answer', answer,

@@ -9,7 +9,6 @@ from utils.tools import VQAEval
 
 x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000]
 # x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
-# x_bins = [1000, 2000, 3000, 5000, 9000, 15000, 26000, 44000, 75000]
 y_interval = 0.2
 vqa = VQAEval()
 
@@ -20,10 +19,13 @@ def is_correct(answer, response):
             return int(int(response) == answer)
 
         response = response.lower()
+        response = response.replace('the answer is', '')
+        response = response.replace('*', '')  # parse **A**
         if response.find('.') != -1:
             response = response.split('.')[0]
             response = response.replace(',', '')
             response = response.strip()
+        response = response.strip()
 
         if response == 'none':
             return 0
@@ -36,16 +38,16 @@ def is_correct(answer, response):
 
     if isinstance(answer, list):
         try:
-            response = response.replace('json', '').strip()
+            response = response.replace('json', '').replace('```', '').strip()
             response = json.loads(response)
             if isinstance(response, dict):
                 response = sum(list(response.values()), start=[])
         except Exception as e:
-            print(f"Fail to parse {response_orig} Exception: {e}")
+            # print(f"Fail to parse {response_orig} Exception: {e}")
             return 0
 
-        if not isinstance(response, list):
-            print(f"Fail to parse {response_orig} Exception: not a list!")
+        if not isinstance(response, (list, tuple)):
+            # print(f"Fail to parse {response_orig} Exception: not a list!")
             return 0
 
         match = 0
@@ -135,7 +137,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Visualization script for outputs")
-    parser.add_argument('--outputs-dir', type=str, default='outputs_v1_64')
+    parser.add_argument('--outputs-dir', type=str, default='')
     args = parser.parse_args()
 
     args.save_dir = os.path.join(args.outputs_dir, 'visualization')

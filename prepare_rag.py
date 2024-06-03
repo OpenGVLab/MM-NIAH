@@ -69,13 +69,13 @@ def encode(model, tokenizer, image_processor, question, texts, images):
     ).input_ids.cuda()
 
     image_features_list = []
-    pixel_values_list = torch.split(pixel_values, 1)
+    pixel_values_list = torch.split(pixel_values, 8)
     for p in pixel_values_list:
         image_features_list.append(model.encode_image(image=p, mode='InternVL-G'))
     image_features = torch.cat(image_features_list)
 
     text_features_list = []
-    input_ids_list = torch.split(input_ids, 1)
+    input_ids_list = torch.split(input_ids, 8)
     for i in input_ids_list:
         text_features_list.append(model.encode_text(text=i))
 
