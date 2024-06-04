@@ -30,8 +30,13 @@ def is_correct(answer, response):
         if response == 'none':
             return 0
 
+        if 'the camera is moving left' in response:
+            response = 'a'
+        elif 'the camera is moving right' in response:
+            response = 'b'
+
         if len(response) != 1:
-            print(f"Fail to parse {response_orig}")
+            # print(f"Fail to parse {response_orig}")
             return 0
 
         return (ord(response) - ord('a')) == answer
@@ -85,6 +90,10 @@ def main(args):
                 else:
                     y = entry['position']
 
+                # TODO: rm
+                if x >= 72000:
+                    continue
+
                 if y == 1.0:
                     y = 0.99
 
@@ -133,7 +142,7 @@ def main(args):
         with open(file_path_txt, 'w') as file:
             file.write(json.dumps(total[1:].T.tolist()) + '\n\n')
             file.write(json.dumps(uniform_data.tolist()) + '\n\n')
-            file.write(json.dumps(uniform_data.mean(axis=0).tolist()))
+            file.write(json.dumps([round(item, 6) for item in uniform_data.mean(axis=0).tolist()]))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Visualization script for outputs")
