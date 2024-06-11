@@ -9,11 +9,11 @@
     },
     "counting-text": {
         "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/counting-text-easy.jsonl"
+        "annotation": "mm_niah/annotations/counting-text.jsonl"
     },
     "counting-image": {
         "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/counting-image-easy.jsonl"
+        "annotation": "mm_niah/annotations/counting-image.jsonl"
     },
     "reasoning-text": {
         "root": "mm_niah/images",
@@ -25,26 +25,26 @@
     },
     "retrieval-text-rag": {
         "root": "mm_niah/images",
-        "annotation": "outputs_v1_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/retrieval-text.jsonl"
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/retrieval-text.jsonl"
     },
     "retrieval-image-rag": {
         "root": "mm_niah/images",
-        "annotation": "outputs_v1_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/retrieval-image.jsonl"
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/retrieval-image.jsonl"
     },
     "counting-text-rag": {
         "root": "mm_niah/images",
-        "annotation": "outputs_v1_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-text-easy.jsonl"
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-text.jsonl"
     },
     "counting-image-rag": {
         "root": "mm_niah/images",
-        "annotation": "outputs_v1_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-image-easy.jsonl"
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-image.jsonl"
     },
     "reasoning-text-rag": {
         "root": "mm_niah/images",
-        "annotation": "outputs_v1_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/reasoning-text.jsonl"
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/reasoning-text.jsonl"
     },
     "reasoning-image-rag": {
         "root": "mm_niah/images",
-        "annotation": "outputs_v1_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/reasoning-image.jsonl"
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/reasoning-image.jsonl"
     }
 }

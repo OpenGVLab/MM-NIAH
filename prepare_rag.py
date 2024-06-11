@@ -10,22 +10,14 @@ from tqdm import tqdm
 from transformers import AutoModel, CLIPImageProcessor
 from transformers import AutoTokenizer
 
-from utils.tools import get_input, init_dist
-from petrel_client.client import Client
+from utils.tools import init_dist
 
 
-client = Client()
-FILEPATH = 'data.json'
+FILEPATH = 'shells/data/mm_niah.json'
 
 
 def load_image(image_file):
-    if 's3:' in image_file:
-        data_bytes = client.get(image_file)
-        assert data_bytes is not None, f'fail to load {image_file}'
-        data_buff = io.BytesIO(data_bytes)
-        image = Image.open(data_buff).convert('RGB')
-    else:
-        image = Image.open(image_file).convert('RGB')
+    image = Image.open(image_file).convert('RGB')
     return image
 
 
@@ -85,14 +77,6 @@ def encode(model, tokenizer, image_processor, question, texts, images):
     image_features = image_features / image_features.norm(dim=1, keepdim=True)
     text_features = text_features / text_features.norm(dim=1, keepdim=True)
 
-    # cosine similarity as logits
-    # logit_scale = model.logit_scale.exp()
-    # logits_per_image = logit_scale * text_features[:1] @ image_features.t()
-    # probs_per_image = logits_per_image.softmax(dim=-1)
-
-    # logits_per_text = logit_scale * text_features[:1] @ text_features[1:].t()
-    # probs_per_text = logits_per_text.softmax(dim=-1)
-
     logits_per_text = text_features[:1] @ text_features[1:].t()
     logits_per_image = text_features[:1] @ image_features.t()
 
@@ -114,19 +98,10 @@ def get_rag_context(args, model, tokenizer, image_processor, question, context, 
         texts_splitted.append('<image>')
 
     texts_splitted.pop(-1)
-    # assert sum([t == '<image>' for t in texts_splitted]) == context.count('<image>'), f"{len(texts_splitted)}, {context.count('<image>')}"
     assert ''.join(texts_splitted) == context
 
-    # TODO: rm
     images_list = [i for i in images]
-    images_list = [
-        os.path.join('s3://public-dataset/OBELISC/raw-images', i[len('obelisc/'):]) if i.startswith('obelisc/') else i
-        for i in images_list
-    ]
-    images_list = [
-        os.path.join(args.image_folder, i) if 's3://' not in i else i
-        for i in images_list
-    ]
+    images_list = [os.path.join(args.image_folder, i) for i in images_list]
 
     texts_sim, images_sim = encode(
         model=model,
@@ -254,7 +229,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Evaluation script for InternVL-1.5")
+    parser = argparse.ArgumentParser(description="Evaluation script for InternVL-1.5-RAG")
     parser.add_argument('--model-path', type=str, default='OpenGVLab/InternVL-14B-224px')
     parser.add_argument('--task', type=str, default='')
     parser.add_argument('--outputs-dir', type=str, default='')

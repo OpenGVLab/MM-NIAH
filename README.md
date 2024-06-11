@@ -51,6 +51,10 @@ python calculate_scores.py --outputs-dir ./outputs/
 
 `NOTE`: Make sure that you install the flash-attention-2 successfully, otherwise you will meet the torch.cuda.OutOfMemoryError.
 
+## Contact
+- Weiyun Wang: wangweiyun@pjlab.org.cn
+- Wenhai Wang: wangwenhai@pjlab.org.cn
+- Wenqi Shao: shaowenqi@pjlab.org.cn
 
 ## Acknowledgement
 
@@ -59,3 +63,5 @@ The multimodal haystack of MM-NIAH is build upon the documents from [OBELICS](ht
 Thanks for their awesome work!
 
 ## Citation
+```BibTex
+```

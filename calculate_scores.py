@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from utils.tools import VQAEval
 
 x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000]
-# x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000, 80000, 96000, 128000]
 y_interval = 0.2
 vqa = VQAEval()
 
@@ -92,10 +91,6 @@ def main(args):
                 else:
                     y = entry['position']
 
-                # TODO: rm
-                if x >= 72000:
-                    continue
-
                 if y == 1.0:
                     y = 0.99
 
@@ -148,9 +143,9 @@ def main(args):
             file.write(json.dumps([round(item, 6) for item in uniform_data.mean(axis=0).tolist()]))
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Visualization script for outputs")
+    parser = argparse.ArgumentParser(description="Evaluation script for MM-NIAH")
     parser.add_argument('--outputs-dir', type=str, default='')
     args = parser.parse_args()
 
-    args.save_dir = os.path.join(args.outputs_dir, 'visualization')
+    args.save_dir = os.path.join(args.outputs_dir, 'results')
     main(args)

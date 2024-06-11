@@ -7,7 +7,6 @@ import base64
 import gradio as gr
 
 from PIL import Image
-from petrel_client.client import Client
 
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
@@ -15,10 +14,8 @@ logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)],
 )
 
-FILEPATH = 'data.json'
+FILEPATH = 'shells/data/mm_niah.json'
 IMAGE_PLACEHOLDER = '<image>'
-
-client = Client()
 
 class InterleavedDataset:
     def __init__(self, meta):
@@ -38,13 +35,7 @@ class InterleavedDataset:
         return len(self.lines)
 
 def load_image(image_file):
-    if 's3:' in image_file:
-        data_bytes = client.get(image_file)
-        assert data_bytes is not None, f'fail to load {image_file}'
-        data_buff = io.BytesIO(data_bytes)
-        image = Image.open(data_buff).convert('RGB')
-    else:
-        image = Image.open(image_file).convert('RGB')
+    image = Image.open(image_file).convert('RGB')
     return image
 
 def image_to_mdstring(image):
@@ -73,14 +64,7 @@ def process_item(item):
     num_image_placeholders = context.count(IMAGE_PLACEHOLDER) + question.count(IMAGE_PLACEHOLDER)
     assert num_image_placeholders == len(images_list)
 
-    images_list = [
-        os.path.join('s3://public-dataset/OBELISC/raw-images', i[len('obelisc/'):]) if i.startswith('obelisc/') else i
-        for i in images_list
-    ]
-    images_list = [
-        os.path.join(image_dir, i) if 's3://' not in i else i
-        for i in images_list
-    ]
+    images_list = [os.path.join(image_dir, i) for i in images_list]
     for i in range(num_image_placeholders):
         context = context.replace(IMAGE_PLACEHOLDER, image_to_mdstring(images_list[i]), 1)
 
@@ -99,10 +83,9 @@ def process_item(item):
         if isinstance(needle, int):
             continue
 
-        if needle in context:  # 文本针
+        if needle in context:  # text needles
             context = context.replace(needle, f' `{needle}` ')
-        else:  # 图像针
-            # assert os.path.exists(os.path.join(image_dir, needle)), os.path.join(image_dir, needle)
+        else:  # image needles
             pass
 
     # choices
@@ -116,15 +99,13 @@ def process_item(item):
             c = image_to_mdstring(os.path.join(image_dir, c))
             question = f"{question}\n\n{chr(c_idx + ord('A'))}. {c}"
 
-    key_list = ['needles', 'placed_depth', 'context_length', 'num_images']
-    err_info = "Fail to load"
-
     if isinstance(answer, list):
         answer = json.dumps(answer)
 
+    key_list = ['needles', 'placed_depth', 'context_length', 'num_images']
     md_str = [
         '## Meta Info',
-        *[f'{k}={meta.get(k, err_info)}' for k in key_list],
+        *[f'{k}={meta[k]}' for k in key_list],
         f"num_images={len(images_list)=}",
         '## Context', context,
         '## Question', question,

@@ -1,33 +1,25 @@
 #!/bin/bash
 
 PARTITION=${PARTITION:-"Intern5"}
-GPUS=${GPUS:-16}
+GPUS=${GPUS:-64}
 GPUS_PER_NODE=${GPUS_PER_NODE:-8}
 GPUS_PER_TASK=${GPUS_PER_TASK:-8}
 QUOTA_TYPE=${QUOTA_TYPE:-"reserved"}
 
-# 常量路径
-OUTPUTS_DIR="outputs_v2_${GPUS}"
-LOG_DIR="logs_v2_${GPUS}"
+OUTPUTS_DIR="outputs"
+LOG_DIR="logs"
 
-# 循环不同的数据集和答案文件
 declare -a model_paths=( \
-    'ckpts/OpenGVLab/InternVL-Chat-V1-5' \
+    'OpenGVLab/InternVL-Chat-V1-5' \
 )
 
 declare -a tasks=( \
-    # 'retrieval-text' \
-    # 'retrieval-image' \
-    # 'counting-text' \
-    # 'counting-image' \
-    # 'reasoning-text' \
-    # 'reasoning-image' \
-    # 'retrieval-text-v2' \
-    # 'retrieval-image-v2' \
-    'counting-text-v2' \
-    'counting-image-v2' \
-    # 'reasoning-text-v2' \
-    # 'reasoning-image-v2' \
+    'retrieval-text' \
+    'retrieval-image' \
+    'counting-text' \
+    'counting-image' \
+    'reasoning-text' \
+    'reasoning-image' \
 )
 
 mkdir -p $LOG_DIR
@@ -47,7 +39,6 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
             --job-name="eval_${model_name}_${task}" \
             -o "${LOG_DIR}/${model_name}_${task}.log" \
             -e "${LOG_DIR}/${model_name}_${task}.log" \
-            --async \
             python -u eval_internvl.py \
             --model-path $model_path \
             --task $task \

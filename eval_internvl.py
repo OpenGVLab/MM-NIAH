@@ -2,7 +2,6 @@ import os
 import io
 import json
 import argparse
-import subprocess
 import torch
 import torchvision.transforms as T
 
@@ -13,12 +12,8 @@ from torchvision.transforms.functional import InterpolationMode
 
 from utils.tools import get_input, init_dist
 
-from petrel_client.client import Client
-client = Client()
 
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:128'
-
-FILEPATH = 'data.json'
+FILEPATH = 'shells/data/mm_niah.json'
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
@@ -90,14 +85,7 @@ def dynamic_preprocess(image, min_num=1, max_num=6, image_size=448, use_thumbnai
 
 
 def load_image(image_file, dynamic_image_size=True, input_size=448, max_num=6):
-    if 's3:' in image_file:
-        data_bytes = client.get(image_file)
-        assert data_bytes is not None, f'fail to load {image_file}'
-        data_buff = io.BytesIO(data_bytes)
-        image = Image.open(data_buff).convert('RGB')
-    else:
-        image = Image.open(image_file).convert('RGB')
-
+    image = Image.open(image_file).convert('RGB')
     transform = build_transform(input_size=input_size)
     if dynamic_image_size:
         images = dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
@@ -233,14 +221,10 @@ def main(args):
         f"devices: {set([p.device for p in model.parameters()])}"
     )
 
-    ans_file_name = f'{model_name}_{task}.jsonl'
-    if args.use_rag:
-        ans_file_name = f'rag_{ans_file_name}'
-
     temp_dir = f"temp_{model_name}_{task}"
+    ans_file_name = f'{model_name}_{task}.jsonl'
     ans_file_path = os.path.join(args.outputs_dir, temp_dir, f"{args.rank}_{args.world_size}_{ans_file_name}")
 
-    os.makedirs(args.outputs_dir, exist_ok=True)
     os.makedirs(os.path.join(args.outputs_dir, temp_dir), exist_ok=True)
 
     with open(args.question_file, 'r') as file:
@@ -265,23 +249,6 @@ def main(args):
         if sample['id'] in skip_idx:
             continue
 
-        context, images_list, question, answer = get_input(sample)
-        context = context.replace('</s>', '')
-
-        # TODO: rm
-        if sample['meta']['context_length'] >= 72000:
-            print(f"Rank {args.rank} early stops because of too length context. context_length={sample['meta']['context_length']}")
-            ans_file.write(json.dumps({
-                "question_id": sample['id'],
-                "question": question,
-                "answer": sample['answer'],
-                "response": 'None',
-                'total_tokens':sample['meta']['context_length'],
-                'position':sample['meta']['placed_depth']
-            }) + "\n")
-            ans_file.flush()
-            continue
-
         if oom_cnt >= 20:
             print(f"Rank {args.rank} early stops because of successive failures. {oom_cnt=}")
             ans_file.write(json.dumps({
@@ -295,19 +262,9 @@ def main(args):
             ans_file.flush()
             continue
 
-        # TODO: rm
-        images_list = [
-            os.path.join('s3://public-dataset/OBELISC/raw-images', i[len('obelisc/'):]) if i.startswith('obelisc/') else i
-            for i in images_list
-        ]
-        images_list = [
-            os.path.join(args.image_folder, i) if 's3://' not in i else i
-            for i in images_list
-        ]
+        context, images_list, question, answer = get_input(sample)
+        images_list = [os.path.join(args.image_folder, i) for i in images_list]
 
-        if args.use_rag:
-            from utils.rag import rag
-            context, images_list = rag(context, images_list, question, 3000)
         qs = f'{context}\n{question}'
 
         if len(images_list) > 0:
@@ -361,10 +318,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluation script for InternVL-1.5")
-    parser.add_argument('--model-path', type=str, default='')
+    parser.add_argument('--model-path', type=str, default='OpenGVLab/InternVL-Chat-V1-5')
     parser.add_argument('--task', type=str, default='')
     parser.add_argument('--outputs-dir', type=str, default='')
-    parser.add_argument('--use-rag', action='store_true', default=False)
     parser.add_argument('--num-gpus-per-rank', type=int, default=2)
     args = parser.parse_args()
 
