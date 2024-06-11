@@ -15,7 +15,7 @@ This benchmark requires the model to answer specific questions according to the 
 The evaluation data in MM-NIAH consists of three tasks: `retrieval`, `counting`, and `reasoning`. The needles are inserted into either text or images in the documents. Those inserted into text are termed `text needles`, whereas those within images are referred to as `image needles`.
 Please see [our paper]() for more details.
 
-<!-- <img width="800" alt="image" src="assets/data_examples.jpg"> -->
+<img width="800" alt="image" src="assets/data_examples.jpg">
 
 ## Experimental Results
 
