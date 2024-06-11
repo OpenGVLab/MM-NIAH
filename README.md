@@ -64,6 +64,10 @@ python calculate_scores.py --outputs-dir ./outputs/
 
 `NOTE`: Make sure that you install the [flash-attention](https://github.com/Dao-AILab/flash-attention) successfully, otherwise you will meet the torch.cuda.OutOfMemoryError.
 
+## Visualization
+
+If you want to visualize samples in MM-NIAH, please install `gradio==3.43.2` and run this script [visualization.py](visualization.py).
+
 ## Contact
 - Weiyun Wang: wangweiyun@pjlab.org.cn
 - Wenhai Wang: wangwenhai@pjlab.org.cn
@@ -75,6 +79,6 @@ The multimodal haystack of MM-NIAH is build upon the documents from [OBELICS](ht
 
 Thanks for their awesome work!
 
-## Citation
+<!-- ## Citation
 ```BibTex
-```
+``` -->
