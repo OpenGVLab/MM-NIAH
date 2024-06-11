@@ -1,14 +1,14 @@
 #!/bin/bash
 
 PARTITION=${PARTITION:-"Intern5"}
-GPUS=${GPUS:-64}
+GPUS=${GPUS:-16}
 GPUS_PER_NODE=${GPUS_PER_NODE:-8}
 GPUS_PER_TASK=${GPUS_PER_TASK:-8}
 QUOTA_TYPE=${QUOTA_TYPE:-"reserved"}
 
 # 常量路径
-OUTPUTS_DIR="outputs_v1_${GPUS}"
-LOG_DIR="logs_v1_${GPUS}"
+OUTPUTS_DIR="outputs_v2_${GPUS}"
+LOG_DIR="logs_v2_${GPUS}"
 
 # 循环不同的数据集和答案文件
 declare -a model_paths=( \
@@ -16,12 +16,18 @@ declare -a model_paths=( \
 )
 
 declare -a tasks=( \
-    'retrieval-text' \
-    'retrieval-image' \
-    'counting-text' \
-    'counting-image' \
-    'reasoning-text' \
-    'reasoning-image' \
+    # 'retrieval-text' \
+    # 'retrieval-image' \
+    # 'counting-text' \
+    # 'counting-image' \
+    # 'reasoning-text' \
+    # 'reasoning-image' \
+    # 'retrieval-text-v2' \
+    # 'retrieval-image-v2' \
+    'counting-text-v2' \
+    'counting-image-v2' \
+    # 'reasoning-text-v2' \
+    # 'reasoning-image-v2' \
 )
 
 mkdir -p $LOG_DIR

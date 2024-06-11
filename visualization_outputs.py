@@ -14,6 +14,7 @@ vqa = VQAEval()
 
 def is_correct(answer, response):
     response_orig = response
+    response = response.strip('.')
     if isinstance(answer, int):
         if response.isdigit():
             return int(int(response) == answer)
@@ -67,6 +68,7 @@ def main(args):
     os.makedirs(f'{args.save_dir}_pdf', exist_ok=True)
     os.makedirs(f'{args.save_dir}_txt', exist_ok=True)
 
+    plt.figure(figsize=(10, 10))
     result_path_list = os.listdir(args.outputs_dir)
     for file_name in result_path_list:
         total = np.zeros((len(x_bins) + 1, int(1 / y_interval)))
@@ -127,16 +129,17 @@ def main(args):
         cmap_name = 'my_list'
         cm = LinearSegmentedColormap.from_list(cmap_name, colors, N=n_bins)
 
-        ax = sns.heatmap(uniform_data, vmin=0, vmax=1, cmap=cm)
+        # ax = sns.heatmap(uniform_data, vmin=0, vmax=1, cmap=cm)
+        ax = sns.heatmap(uniform_data, vmin=0, vmax=1, cmap=cm, cbar=False)
 
         plt.xticks(ticks=np.arange(uniform_data.shape[1])+0.5, labels=[f'{i / 1000}k' for i in x_bins])
-        plt.xticks(rotation=45)
+        plt.xticks(rotation=45, fontsize=28, fontweight='bold')
 
-        plt.yticks(ticks=np.arange(uniform_data.shape[0]), labels=[f'{j / (1/y_interval)}' for j in range(int(1/y_interval))])
-        plt.yticks(rotation=0)
+        plt.yticks(ticks=np.arange(uniform_data.shape[0]+1), labels=[f'{j / (1/y_interval)}' for j in range(int(1/y_interval)+1)])
+        plt.yticks(rotation=0, fontsize=28, fontweight='bold')
 
-        plt.savefig(file_path)
-        plt.savefig(file_path_pdf)
+        plt.savefig(file_path, dpi=300, bbox_inches='tight')
+        plt.savefig(file_path_pdf, dpi=300, bbox_inches='tight')
         plt.clf()
 
         with open(file_path_txt, 'w') as file:

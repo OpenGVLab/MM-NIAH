@@ -49,27 +49,27 @@
     },
     "retrieval-text-v2-sampled": {
         "root": "mm-niah-v2/images",
-        "annotation": "mm-niah-v2-sampled/annotations/retrieval-text.jsonl"
+        "annotation": "mm-niah-v2/annotations/retrieval-text.jsonl"
     },
     "retrieval-image-v2-sampled": {
         "root": "mm-niah-v2/images",
-        "annotation": "mm-niah-v2-sampled/annotations/retrieval-image.jsonl"
+        "annotation": "mm-niah-v2/annotations/retrieval-image.jsonl"
     },
     "counting-text-v2-sampled": {
         "root": "mm-niah-v2/images",
-        "annotation": "mm-niah-v2-sampled/annotations/counting-text.jsonl"
+        "annotation": "mm-niah-v2/annotations/counting-text.jsonl"
     },
     "counting-image-v2-sampled": {
         "root": "mm-niah-v2/images",
-        "annotation": "mm-niah-v2-sampled/annotations/counting-image.jsonl"
+        "annotation": "mm-niah-v2/annotations/counting-image.jsonl"
     },
     "reasoning-text-v2-sampled": {
         "root": "mm-niah-v2/images",
-        "annotation": "mm-niah-v2-sampled/annotations/reasoning-text.jsonl"
+        "annotation": "mm-niah-v2/annotations/reasoning-text.jsonl"
     },
     "reasoning-image-v2-sampled": {
         "root": "mm-niah-v2/images",
-        "annotation": "mm-niah-v2-sampled/annotations/reasoning-image.jsonl"
+        "annotation": "mm-niah-v2/annotations/reasoning-image.jsonl"
     },
     "retrieval-text-v2": {
         "root": "mm-niah-v2/images",
@@ -105,11 +105,11 @@
     },
     "counting-text-rag-v2": {
         "root": "mm-niah-v2/images",
-        "annotation": "outputs_v2_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-text-easy.jsonl"
+        "annotation": "outputs_v2_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-text.jsonl"
     },
     "counting-image-rag-v2": {
         "root": "mm-niah-v2/images",
-        "annotation": "outputs_v2_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-image-easy.jsonl"
+        "annotation": "outputs_v2_prepare_rag_32/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-image.jsonl"
     },
     "reasoning-text-rag-v2": {
         "root": "mm-niah-v2/images",

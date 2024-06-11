@@ -7,27 +7,21 @@ GPUS_PER_TASK=${GPUS_PER_TASK:-8}
 QUOTA_TYPE=${QUOTA_TYPE:-"reserved"}
 
 # 常量路径
-OUTPUTS_DIR="outputs_v2_${GPUS}"
-LOG_DIR="logs_v2_${GPUS}"
+OUTPUTS_DIR="outputs_v2_rag_${GPUS}"
+LOG_DIR="logs_v2_rag_${GPUS}"
 
 # 循环不同的数据集和答案文件
 declare -a model_paths=( \
-    'ckpts/BAAI/Emu2-Chat' \
+    'ckpts/OpenGVLab/InternVL-Chat-V1-5' \
 )
 
 declare -a tasks=( \
-    # 'retrieval-text' \
-    # 'retrieval-image' \
-    # 'counting-text' \
-    # 'counting-image' \
-    # 'reasoning-text' \
-    # 'reasoning-image' \
-    # 'retrieval-text-v2' \
-    # 'retrieval-image-v2' \
-    'counting-text-v2' \
-    'counting-image-v2' \
-    # 'reasoning-text-v2' \
-    # 'reasoning-image-v2' \
+    # 'retrieval-text-rag-v2' \
+    # 'retrieval-image-rag-v2' \
+    'counting-text-rag-v2' \
+    'counting-image-rag-v2' \
+    # 'reasoning-text-rag-v2' \
+    # 'reasoning-image-rag-v2' \
 )
 
 mkdir -p $LOG_DIR
@@ -48,7 +42,7 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
             -o "${LOG_DIR}/${model_name}_${task}.log" \
             -e "${LOG_DIR}/${model_name}_${task}.log" \
             --async \
-            python -u eval_emu2.py \
+            python -u eval_internvl.py \
             --model-path $model_path \
             --task $task \
             --outputs-dir $OUTPUTS_DIR \

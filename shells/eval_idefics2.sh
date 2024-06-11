@@ -1,10 +1,10 @@
 #!/bin/bash
 
-PARTITION=${PARTITION:-"llm_s"}
+PARTITION=${PARTITION:-"Intern5"}
 GPUS=${GPUS:-16}
 GPUS_PER_NODE=${GPUS_PER_NODE:-8}
 GPUS_PER_TASK=${GPUS_PER_TASK:-8}
-QUOTA_TYPE=${QUOTA_TYPE:-"reserved"}
+QUOTA_TYPE=${QUOTA_TYPE:-"spot"}
 
 # 常量路径
 OUTPUTS_DIR="outputs_v2_${GPUS}"
@@ -12,7 +12,8 @@ LOG_DIR="logs_v2_${GPUS}"
 
 # 循环不同的数据集和答案文件
 declare -a model_paths=( \
-    'ckpts/BAAI/Emu2-Chat' \
+    'ckpts/HuggingFaceM4/idefics2-8b' \
+    # 'ckpts/HuggingFaceM4/idefics2-8b-chatty' \
 )
 
 declare -a tasks=( \
@@ -48,7 +49,7 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
             -o "${LOG_DIR}/${model_name}_${task}.log" \
             -e "${LOG_DIR}/${model_name}_${task}.log" \
             --async \
-            python -u eval_emu2.py \
+            python -u eval_idefics2.py \
             --model-path $model_path \
             --task $task \
             --outputs-dir $OUTPUTS_DIR \

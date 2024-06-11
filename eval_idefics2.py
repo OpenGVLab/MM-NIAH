@@ -1,4 +1,5 @@
 import os
+import re
 import io
 import json
 import argparse
@@ -8,7 +9,7 @@ import torchvision.transforms as T
 
 from PIL import Image
 from tqdm import tqdm
-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
+from transformers import AutoProcessor, AutoModelForVision2Seq, AutoConfig
 from torchvision.transforms.functional import InterpolationMode
 
 from utils.tools import get_input, init_dist
@@ -50,26 +51,24 @@ def build_model(args):
         num_gpus_for_vit = 1
         num_gpus_for_llm = len(visible_devices) - num_gpus_for_vit
 
-        num_layers = config.num_hidden_layers
+        num_layers = config.text_config.num_hidden_layers
         num_layers_per_gpu = num_layers // num_gpus_for_llm
         for i in range(num_layers):
             device_idx = min(i // num_layers_per_gpu + num_gpus_for_vit, len(visible_devices) - 1)
-            device_map[f'model.decoder.lm.model.layers.{i}'] = visible_devices[device_idx]
+            device_map[f'model.text_model.layers.{i}'] = visible_devices[device_idx]
 
-        num_layers = config.vision_config['layers']
+        num_layers = config.vision_config.num_hidden_layers
         num_layers_per_gpu = num_layers // num_gpus_for_vit
         for i in range(num_layers):
             device_idx = min(i // num_layers_per_gpu, num_gpus_for_vit - 1)
-            device_map[f'model.visual.blocks.{i}'] = visible_devices[device_idx]
+            device_map[f'model.vision_model.encoder.layers.{i}'] = visible_devices[device_idx]
 
-        device_map['model.visual.patch_embed.proj'] = 0
-        device_map['model.visual.pos_embed'] = 0
-        device_map['model.visual.cls_token'] = 0
-        device_map['project_down.weight'] = num_gpus_for_vit - 1
-        device_map['project_up.weight'] = num_gpus_for_vit - 1
-        device_map['model.decoder.lm.model.embed_tokens.weight'] = visible_devices[-1]
-        device_map['model.decoder.lm.model.norm.weight'] = visible_devices[-1]
-        device_map['model.decoder.lm.lm_head.weight'] = visible_devices[-1]
+        device_map['model.vision_model.embeddings'] = 0
+        device_map['model.vision_model.post_layernorm'] = num_gpus_for_vit - 1
+        device_map['model.connector'] = num_gpus_for_vit - 1
+        device_map['model.text_model.embed_tokens'] = num_gpus_for_vit - 1
+        device_map['model.text_model.norm'] = visible_devices[-1]
+        device_map['lm_head'] = visible_devices[-1]
 
     else:
         device_map = {'': visible_devices[0]}
@@ -78,17 +77,16 @@ def build_model(args):
         for k, v in device_map.items():
             print(k, v)
 
-    model = AutoModelForCausalLM.from_pretrained(
+    model = AutoModelForVision2Seq.from_pretrained(
         args.model_path,
         torch_dtype=torch.bfloat16,
         low_cpu_mem_usage=True,
         trust_remote_code=True,
         device_map=device_map,
     ).eval()
-    tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
-    tokenizer.model_max_length = 256000
+    processor = AutoProcessor.from_pretrained(args.model_path, trust_remote_code=True)
 
-    return model, tokenizer
+    return model, processor
 
 
 def main(args):
@@ -96,7 +94,7 @@ def main(args):
 
     task = args.task
     model_name = os.path.basename(args.model_path)
-    model, tokenizer = build_model(args)
+    model, processor = build_model(args)
 
     print(
         f"Rank [{args.rank}] "
@@ -180,30 +178,36 @@ def main(args):
             from utils.rag import rag
             context, images_list = rag(context, images_list, question, 3000)
         qs = f'{context}\n{question}'
-        qs = qs.replace('<image>', '[<IMG_PLH>]')
 
-        inputs = model.build_input_ids(
-            text=[qs],
-            tokenizer=tokenizer,
-            image=load_images(images_list),
-        )
+        messages = [{"role": "user", "content": []}]
+        split_qs = re.split(r'(<image>)', qs)
+        for each_split in split_qs:
+            if each_split == '<image>':
+                messages[0]['content'].append({"type": "image"})
+            else:
+                messages[0]['content'].append({"type": "text", "text": each_split})
 
         try:
+            prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
+            inputs = processor(text=prompt, images=load_images(images_list), return_tensors="pt")
+            inputs = {k: v.to(args.local_rank) for k, v in inputs.items()}
             outputs = model.generate(
-                input_ids=inputs['input_ids'],
-                attention_mask=inputs['attention_mask'],
-                image=inputs['image'].to(torch.bfloat16),
+                **inputs,
                 do_sample=False,
                 num_beams=1,
                 max_new_tokens=64 if 'counting' in task else 32,
             )
-            outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+            outputs = outputs[:, inputs['input_ids'].shape[1]:]
+            outputs = processor.batch_decode(outputs, skip_special_tokens=True)[0]
             oom_cnt = 0
         except torch.cuda.OutOfMemoryError:
             print(f"Rank {args.rank} OutOfMemoryError occurs! totoal_tokens={sample['meta']['context_length']}")
             outputs = 'None'
             oom_cnt += 1
             torch.cuda.empty_cache()
+        except Exception as e:
+            print(f"Rank {args.rank} {e}")
+            outputs = 'None'
 
         outputs = outputs.strip()
         print(f"totoal_tokens={sample['meta']['context_length']}, {outputs=}")
@@ -213,8 +217,9 @@ def main(args):
             "question": question,
             "answer": sample['answer'],
             "response": outputs,
-            'total_tokens':sample['meta']['context_length'],
-            'position':sample['meta']['placed_depth']
+            'total_tokens': sample['meta']['context_length'],
+            'position': sample['meta']['placed_depth'],
+            # 'prompt': prompt,
         }) + "\n")
         ans_file.flush()
         skip_idx.add(sample['id'])

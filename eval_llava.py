@@ -147,6 +147,20 @@ def main(args):
         context, images_list, question, answer = get_input(sample)
         context = context.replace('</s>', '')
 
+        # TODO: rm
+        if sample['meta']['context_length'] >= 72000:
+            print(f"Rank {args.rank} early stops because of too length context. context_length={sample['meta']['context_length']}")
+            ans_file.write(json.dumps({
+                "question_id": sample['id'],
+                "question": question,
+                "answer": sample['answer'],
+                "response": 'None',
+                'total_tokens':sample['meta']['context_length'],
+                'position':sample['meta']['placed_depth']
+            }) + "\n")
+            ans_file.flush()
+            continue
+
         if oom_cnt >= 20:
             print(f"Rank {args.rank} early stops because of successive failures. {oom_cnt=}")
             ans_file.write(json.dumps({

@@ -13,12 +13,18 @@ declare -a model_paths=( \
 )
 
 declare -a tasks=( \
-    'retrieval-text' \
-    'retrieval-image' \
-    'counting-text' \
-    'counting-image' \
-    'reasoning-text' \
-    'reasoning-image' \
+    # 'retrieval-text' \
+    # 'retrieval-image' \
+    # 'counting-text' \
+    # 'counting-image' \
+    # 'reasoning-text' \
+    # 'reasoning-image' \
+    'retrieval-text-v2' \
+    'retrieval-image-v2' \
+    'counting-text-v2' \
+    'counting-image-v2' \
+    'reasoning-text-v2' \
+    'reasoning-image-v2' \
 )
 
 for ((i=0; i<${#model_paths[@]}; i++)); do
@@ -29,5 +35,6 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
         model_name="$(basename ${model_path})"
 
         cat ${OUTPUTS_DIR}/temp_${model_name}_${task}/* > ${OUTPUTS_DIR}/${model_name}_${task}.jsonl
+        wc -l ${OUTPUTS_DIR}/${model_name}_${task}.jsonl
     done
 done

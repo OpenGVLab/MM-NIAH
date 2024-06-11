@@ -308,8 +308,8 @@ def get_input(item):
 
     # counting-image/text
     elif isinstance(answer, list):
-        # pass
-        question += '\nAnswer the question using a single word or phrase.'
+        pass
+        # question += '\nAnswer the question using a single word or phrase.'
 
     # retrieval/reasoning-text
     else:
