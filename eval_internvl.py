@@ -256,8 +256,8 @@ def main(args):
                 "question": question,
                 "answer": sample['answer'],
                 "response": 'None',
-                'total_tokens':sample['meta']['context_length'],
-                'position':sample['meta']['placed_depth']
+                'context_length':sample['meta']['context_length'],
+                'placed_depth':sample['meta']['placed_depth']
             }) + "\n")
             ans_file.flush()
             continue
@@ -306,8 +306,8 @@ def main(args):
             "question": question,
             "answer": sample['answer'],
             "response": outputs,
-            'total_tokens': sample['meta']['context_length'],
-            'position': sample['meta']['placed_depth'],
+            'context_length': sample['meta']['context_length'],
+            'placed_depth': sample['meta']['placed_depth'],
         }) + "\n")
         ans_file.flush()
         skip_idx.add(sample['id'])

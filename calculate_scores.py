@@ -84,12 +84,12 @@ def main(args):
         with open(jsonl_file_path, 'r') as file:
             for line in file:
                 entry = json.loads(line)
-                x = entry['total_tokens']
-                y = entry['position']
+                x = entry['context_length']
+                y = entry['placed_depth']
                 if isinstance(y, list):
-                    y = sum(entry['position']) / len(entry['position'])
+                    y = sum(entry['placed_depth']) / len(entry['placed_depth'])
                 else:
-                    y = entry['position']
+                    y = entry['placed_depth']
 
                 if y == 1.0:
                     y = 0.99
@@ -138,13 +138,12 @@ def main(args):
         plt.clf()
 
         with open(file_path_txt, 'w') as file:
-            file.write(json.dumps(total[1:].T.tolist()) + '\n\n')
-            file.write(json.dumps(uniform_data.tolist()) + '\n\n')
+            file.write(json.dumps([f'{i / 1000}k' for i in x_bins]) + '\n')
             file.write(json.dumps([round(item, 6) for item in uniform_data.mean(axis=0).tolist()]))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluation script for MM-NIAH")
-    parser.add_argument('--outputs-dir', type=str, default='')
+    parser.add_argument('--outputs-dir', type=str, default='outputs_example')
     args = parser.parse_args()
 
     args.save_dir = os.path.join(args.outputs_dir, 'results')
