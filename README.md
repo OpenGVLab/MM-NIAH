@@ -1,10 +1,10 @@
 # Needle In A Multimodal Haystack
 
-[[Project Page]]()
-[[arXiv Paper]]()
-[[Dataset]](https://huggingface.co/OpenGVLab/MM-NIAH)
-[[Github]](https://github.com/OpenGVLab/MM-NIAH)
-[[Leaderboard]]()
+[[📊 Project Page]]()
+[[📄 arXiv Paper]]()
+[[🤗 Dataset]](https://huggingface.co/OpenGVLab/MM-NIAH)
+[[🏆 Leaderboard]]()
+<!-- [[Github]](https://github.com/OpenGVLab/MM-NIAH) -->
 
 ## News🚀🚀🚀
 - `2024/06/13`: 🚀We release Needle In A Multimodal Haystack ([MM-NIAH](https://huggingface.co/OpenGVLab/MM-NIAH)), the first benchmark designed to systematically evaluate the capability of existing MLLMs to comprehend long multimodal documents.
