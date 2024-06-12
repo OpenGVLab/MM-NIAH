@@ -1,6 +1,7 @@
 import os
 import io
 import json
+import time
 import argparse
 import torch
 import torchvision.transforms as T
@@ -16,6 +17,10 @@ from utils.tools import get_input, init_dist
 FILEPATH = 'shells/data/mm_niah.json'
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
+
+
+def current_time():
+    return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 
 
 def build_transform(input_size):
@@ -299,7 +304,7 @@ def main(args):
             torch.cuda.empty_cache()
 
         outputs = outputs.strip()
-        print(f"totoal_tokens={sample['meta']['context_length']}, {outputs=}")
+        print(f"[{current_time()}] totoal_tokens={sample['meta']['context_length']}, {outputs=}")
 
         ans_file.write(json.dumps({
             "question_id": sample['id'],
@@ -312,7 +317,7 @@ def main(args):
         ans_file.flush()
         skip_idx.add(sample['id'])
 
-    print(f"Rank {args.rank} Finish")
+    print(f"[{current_time()}] Rank {args.rank} Finish")
     ans_file.close()
 
 
