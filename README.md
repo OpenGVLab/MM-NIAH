@@ -1,9 +1,9 @@
 # Needle In A Multimodal Haystack
 
-[[📊 Project Page]]()
-[[📄 arXiv Paper]]()
+[[📊 Project Page]](https://mm-niah.github.io/)
+[[📄 arXiv Paper]](http://arxiv.org/abs/2406.07230)
 [[🤗 Dataset]](https://huggingface.co/OpenGVLab/MM-NIAH)
-[[🏆 Leaderboard]]()
+[[🏆 Leaderboard]](https://mm-niah.github.io/#leaderboard)
 <!-- [[Github]](https://github.com/OpenGVLab/MM-NIAH) -->
 
 ## News🚀🚀🚀
@@ -14,7 +14,7 @@
 Needle In A Multimodal Haystack (MM-NIAH) is a comprehensive benchmark designed to systematically evaluate the capability of existing MLLMs to comprehend long multimodal documents.
 This benchmark requires the model to answer specific questions according to the key information scattered throughout the multimodal document.
 The evaluation data in MM-NIAH consists of three tasks: `retrieval`, `counting`, and `reasoning`. The needles are inserted into either text or images in the documents. Those inserted into text are termed `text needles`, whereas those within images are referred to as `image needles`.
-Please see [our paper]() for more details.
+Please see [our paper](http://arxiv.org/abs/2406.07230) for more details.
 
 <img width="800" alt="image" src="assets/data_examples.jpg">
 
@@ -80,6 +80,12 @@ The multimodal haystack of MM-NIAH is build upon the documents from [OBELICS](ht
 
 Thanks for their awesome work!
 
-<!-- ## Citation
+## Citation
 ```BibTex
-``` -->
+@article{wang2024needle,
+    title={Needle In A Multimodal Haystack}, 
+    author={Wang, Weiyun and Zhang, Shuibo and Ren, Yiming and Duan, Yuchen and Li, Tiantong and Liu, Shuo and Hu, Mengkang and Chen, Zhe and Zhang, Kaipeng and Lu, Lewei and Zhu, Xizhou and Luo, Ping and Qiao, Yu and Dai, Jifeng and Shao, Wenqi and Wang, Wenhai},
+    journal={arXiv preprint arXiv:2406.07230},
+    year={2024}
+}
+```
