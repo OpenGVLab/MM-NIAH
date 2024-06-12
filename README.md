@@ -82,7 +82,7 @@ Please organize the result jsonl files as follows:
 └── reasoning-image.jsonl
 ```
 
-Please remember to include your model name in the email, specify whether the submitted results are for the validation or test split, and indicate whether you want this result to be publicly posted on the leaderboard.
+Please remember to include your model name in the email, specify whether the submitted results are for the validation or test split.
 
 ## Visualization
 
