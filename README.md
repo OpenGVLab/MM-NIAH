@@ -2,7 +2,7 @@
 
 [[📊 Project Page]](https://mm-niah.github.io/)
 [[📄 arXiv Paper]](http://arxiv.org/abs/2406.07230)
-[[🤗 Dataset]](https://huggingface.co/OpenGVLab/MM-NIAH)
+[[🤗 Dataset]](https://huggingface.co/datasets/OpenGVLab/MM-NIAH)
 [[🏆 Leaderboard]](https://mm-niah.github.io/#leaderboard)
 <!-- [[Github]](https://github.com/OpenGVLab/MM-NIAH) -->
 
