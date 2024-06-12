@@ -3,7 +3,7 @@
 [[Project Page](https://mm-niah.github.io/)]
 [[arXiv Paper](http://arxiv.org/abs/2406.07230)]
 [[Dataset](https://huggingface.co/datasets/OpenGVLab/MM-NIAH)]
-[[Leaderboard](https://mm-niah.github.io/#leaderboard)]
+[[Leaderboard](https://mm-niah.github.io/#leaderboard_test)]
 <!-- [[Github](https://github.com/OpenGVLab/MM-NIAH)] -->
 
 ## News🚀🚀🚀
@@ -65,6 +65,24 @@ python calculate_scores.py --outputs-dir ./outputs/
 ```
 
 `NOTE`: Make sure that you install the [flash-attention](https://github.com/Dao-AILab/flash-attention) successfully, otherwise you will meet the torch.cuda.OutOfMemoryError.
+
+## Leaderboard
+
+🚨🚨 The leaderboard is continuously being updated.
+
+To submit your results to the leaderboard on MM-NIAH, please send to [this email](mailto:wangweiyun@pjlab.org.cn) with your result jsonl files on each task, referring to the template file [example-retrieval-text.jsonl](outputs_example/example-retrieval-text.jsonl).
+Please organize the result jsonl files as follows:
+
+```
+├── retrieval-text.jsonl
+├── counting-text.jsonl
+├── reasoning-text.jsonl
+├── retrieval-image.jsonl
+├── counting-image.jsonl
+└── reasoning-image.jsonl
+```
+
+Please remember to include your model name in the email, specify whether the submitted results are for the validation or test split, and indicate whether you want this result to be publicly posted on the leaderboard.
 
 ## Visualization
 
