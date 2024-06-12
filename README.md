@@ -22,18 +22,19 @@ Please see [our paper](http://arxiv.org/abs/2406.07230) for more details.
 
 For the retrieval and reasoning tasks, we utilize Accuracy as the evaluation metric.
 
-For the counting task, we use Soft Accuracy, defined as $\frac{1}{N}\sum_{i=1}^{N} \frac{m_i}{M_i}$, where $m_i$ is the number of matched elements in the corresponding positions between the predicted and ground-truth lists and $M_i$ is the number of elements in the ground-truth list for the $i$-th sample. Note that the required output for this task is a list.
+For the counting task, we use Soft Accuracy, defined as $\frac{1}{N} \sum_{i=1}^{N} \frac{m_i}{M_i}$, where $m_i$ is the number of matched elements in the corresponding positions between the predicted and ground-truth lists and $M_i$ is the number of elements in the ground-truth list for the $i$-th sample. Note that the required output for this task is a list.
 
-<details>
-<summary>Heatmaps (click to expand)</summary>
-<img width="800" alt="image" src="assets/main_heatmap.jpg">
-</details>
-
-<details>
-<summary>Tables (click to expand)</summary>
 <img width="800" alt="image" src="assets/main_table.jpg">
+
+<!-- <details> -->
+<!-- <summary>Heatmaps (click to expand)</summary> -->
+<img width="800" alt="image" src="assets/main_heatmap.jpg">
+<!-- </details> -->
+
+<!-- <details> -->
+<!-- <summary>Tables (click to expand)</summary> -->
 <img width="800" alt="image" src="assets/subtasks_table.jpg">
-</details>
+<!-- </details> -->
 
 ## Evaluation
 
