@@ -1,10 +1,10 @@
 # Needle In A Multimodal Haystack
 
-[[📊 Project Page]](https://mm-niah.github.io/)
-[[📄 arXiv Paper]](http://arxiv.org/abs/2406.07230)
-[[🤗 Dataset]](https://huggingface.co/datasets/OpenGVLab/MM-NIAH)
-[[🏆 Leaderboard]](https://mm-niah.github.io/#leaderboard)
-<!-- [[Github]](https://github.com/OpenGVLab/MM-NIAH) -->
+[[Project Page](https://mm-niah.github.io/)]
+[[arXiv Paper](http://arxiv.org/abs/2406.07230)]
+[[Dataset](https://huggingface.co/datasets/OpenGVLab/MM-NIAH)]
+[[Leaderboard](https://mm-niah.github.io/#leaderboard)]
+<!-- [[Github](https://github.com/OpenGVLab/MM-NIAH)] -->
 
 ## News🚀🚀🚀
 - `2024/06/13`: 🚀We release Needle In A Multimodal Haystack ([MM-NIAH](https://huggingface.co/OpenGVLab/MM-NIAH)), the first benchmark designed to systematically evaluate the capability of existing MLLMs to comprehend long multimodal documents.
@@ -77,6 +77,7 @@ If you want to visualize samples in MM-NIAH, please install `gradio==3.43.2` and
 ## Acknowledgement
 
 The multimodal haystack of MM-NIAH is build upon the documents from [OBELICS](https://github.com/huggingface/OBELICS).
+Besides, our project page is adapted from [Nerfies](https://github.com/nerfies/nerfies.github.io) and [MathVista](https://github.com/lupantech/MathVista).
 
 Thanks for their awesome work!
 
