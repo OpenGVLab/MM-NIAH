@@ -1,4 +1,4 @@
-# Needle In A Multimodal Haystack
+# <img width="60" alt="image" src="assets/logo.png"> Needle In A Multimodal Haystack
 
 [[Project Page](https://mm-niah.github.io/)]
 [[arXiv Paper](http://arxiv.org/abs/2406.07230)]
