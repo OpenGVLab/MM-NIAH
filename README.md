@@ -88,6 +88,51 @@ Please remember to include your model name in the email, specify whether the sub
 
 If you want to visualize samples in MM-NIAH, please install `gradio==3.43.2` and run this script [visualization.py](visualization.py).
 
+## Data Format
+
+```python
+{
+    # int, starting from 0, each task type has independent ids.
+    "id": xxx,
+    # List of length N, where N is the number of images. Each element is a string representing the relative path of the image. The image contained in the "choices" is not included here, only the images in the "context" and "question" are recorded.
+    "images_list": [
+        "xxx",
+        "xxx",
+        "xxx"
+    ],
+    # str, multimodal haystack, "<image>" is used as the image placeholder.
+    "context": "xxx",
+    # str, question
+    "question": "xxx",
+    # Union[str, int, List], records the standard answer. Open-ended questions are str or List (counting task), multiple-choice questions are int
+    "answer": "xxx",
+    # meta_info, records various statistics
+    "meta": {
+        # Union[float, List[float]], range [0,1], position of the needle. If multiple needles are inserted, it is List[float].
+        "placed_depth": xxx,
+        # int, number of text and visual tokens
+        "context_length": xxx,
+        # int, number of text tokens
+        "context_length_text": xxx,
+        # int, number of image tokens
+        "context_length_image": xxx,
+        # int, number of images
+        "num_images": xxx,
+        # List[str], inserted needles. If it is a text needle, record the text; if it is an image needle, record the relative path of the image.
+        "needles": [xxx, ..., xxx],
+        # List[str], candidate text answers. If it is not a multiple-choice question or there are no text candidates, write None.
+        "choices": [xxx, ..., xxx],
+        # List[str], candidate image answers. The relative path of the image. If it is not a multiple-choice question or there are no image candidates, write None.
+        "choices_image_path": [xxx, ..., xxx],
+    }
+}
+```
+
+`NOTE 1`: The number of `<image>` in the context and question equates to the length of the `images_list`.
+
+`NOTE 2`: Save as a jsonl file, each line is a `Dict`.
+
+
 ## Contact
 - Weiyun Wang: wangweiyun@pjlab.org.cn
 - Wenhai Wang: wangwenhai@pjlab.org.cn
