@@ -14,12 +14,18 @@ declare -a model_paths=( \
 )
 
 declare -a tasks=( \
-    'retrieval-text' \
-    'retrieval-image' \
-    'counting-text' \
-    'counting-image' \
-    'reasoning-text' \
-    'reasoning-image' \
+    'retrieval-text-val' \
+    'retrieval-image-val' \
+    'counting-text-val' \
+    'counting-image-val' \
+    'reasoning-text-val' \
+    'reasoning-image-val' \
+    'retrieval-text-test' \
+    'retrieval-image-test' \
+    'counting-text-test' \
+    'counting-image-test' \
+    'reasoning-text-test' \
+    'reasoning-image-test' \
 )
 
 mkdir -p $LOG_DIR
@@ -30,6 +36,7 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
         task=${tasks[j]}
 
         model_name="$(basename ${model_path})"
+        echo "$(date) ${model_name}_${task}"
 
         srun -p ${PARTITION} \
             --gres=gpu:${GPUS_PER_NODE} \

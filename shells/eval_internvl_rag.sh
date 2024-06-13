@@ -14,12 +14,18 @@ declare -a model_paths=( \
 )
 
 declare -a tasks=( \
-    'retrieval-text-rag' \
-    'retrieval-image-rag' \
-    'counting-text-rag' \
-    'counting-image-rag' \
-    'reasoning-text-rag' \
-    'reasoning-image-rag' \
+    'retrieval-text-rag-val' \
+    'retrieval-image-rag-val' \
+    'counting-text-rag-val' \
+    'counting-image-rag-val' \
+    'reasoning-text-rag-val' \
+    'reasoning-image-rag-val' \
+    'retrieval-text-rag-test' \
+    'retrieval-image-rag-test' \
+    'counting-text-rag-test' \
+    'counting-image-rag-test' \
+    'reasoning-text-rag-test' \
+    'reasoning-image-rag-test' \
 )
 
 mkdir -p $LOG_DIR

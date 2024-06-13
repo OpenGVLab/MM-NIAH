@@ -1,50 +1,98 @@
 {
-    "retrieval-text": {
-        "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/retrieval-text.jsonl"
+    "retrieval-text-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "mm_niah_val/annotations/retrieval-text.jsonl"
     },
-    "retrieval-image": {
-        "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/retrieval-image.jsonl"
+    "retrieval-image-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "mm_niah_val/annotations/retrieval-image.jsonl"
     },
-    "counting-text": {
-        "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/counting-text.jsonl"
+    "counting-text-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "mm_niah_val/annotations/counting-text.jsonl"
     },
-    "counting-image": {
-        "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/counting-image.jsonl"
+    "counting-image-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "mm_niah_val/annotations/counting-image.jsonl"
     },
-    "reasoning-text": {
-        "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/reasoning-text.jsonl"
+    "reasoning-text-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "mm_niah_val/annotations/reasoning-text.jsonl"
     },
-    "reasoning-image": {
-        "root": "mm_niah/images",
-        "annotation": "mm_niah/annotations/reasoning-image.jsonl"
+    "reasoning-image-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "mm_niah_val/annotations/reasoning-image.jsonl"
     },
-    "retrieval-text-rag": {
-        "root": "mm_niah/images",
-        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/retrieval-text.jsonl"
+    "retrieval-text-rag-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_val/annotations/retrieval-text.jsonl"
     },
-    "retrieval-image-rag": {
-        "root": "mm_niah/images",
-        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/retrieval-image.jsonl"
+    "retrieval-image-rag-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_val/annotations/retrieval-image.jsonl"
     },
-    "counting-text-rag": {
-        "root": "mm_niah/images",
-        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-text.jsonl"
+    "counting-text-rag-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_val/annotations/counting-text.jsonl"
     },
-    "counting-image-rag": {
-        "root": "mm_niah/images",
-        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/counting-image.jsonl"
+    "counting-image-rag-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_val/annotations/counting-image.jsonl"
     },
-    "reasoning-text-rag": {
-        "root": "mm_niah/images",
-        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/reasoning-text.jsonl"
+    "reasoning-text-rag-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_val/annotations/reasoning-text.jsonl"
     },
-    "reasoning-image-rag": {
-        "root": "mm_niah/images",
-        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah/annotations/reasoning-image.jsonl"
+    "reasoning-image-rag-val": {
+        "root": "mm_niah_val/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_val/annotations/reasoning-image.jsonl"
+    },
+    "retrieval-text-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "mm_niah_test/annotations/retrieval-text.jsonl"
+    },
+    "retrieval-image-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "mm_niah_test/annotations/retrieval-image.jsonl"
+    },
+    "counting-text-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "mm_niah_test/annotations/counting-text.jsonl"
+    },
+    "counting-image-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "mm_niah_test/annotations/counting-image.jsonl"
+    },
+    "reasoning-text-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "mm_niah_test/annotations/reasoning-text.jsonl"
+    },
+    "reasoning-image-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "mm_niah_test/annotations/reasoning-image.jsonl"
+    },
+    "retrieval-text-rag-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_test/annotations/retrieval-text.jsonl"
+    },
+    "retrieval-image-rag-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_test/annotations/retrieval-image.jsonl"
+    },
+    "counting-text-rag-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_test/annotations/counting-text.jsonl"
+    },
+    "counting-image-rag-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_test/annotations/counting-image.jsonl"
+    },
+    "reasoning-text-rag-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_test/annotations/reasoning-text.jsonl"
+    },
+    "reasoning-image-rag-test": {
+        "root": "mm_niah_test/images",
+        "annotation": "outputs_prepare_rag/rag_with_InternVL-14B-224px_mm_niah_test/annotations/reasoning-image.jsonl"
     }
 }
