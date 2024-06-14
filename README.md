@@ -18,6 +18,33 @@ Please see [our paper](http://arxiv.org/abs/2406.07230) for more details.
 
 <img width="800" alt="image" src="assets/data_examples.jpg">
 
+## Main Findingds
+
+Based on our benchmark, we conducted a series of experiments. The main findings are summarized as follows:
+
+- The most advanced MLLMs (e.g. Gemini-1.5) still struggles to comprehend multimodal documents.
+
+- Image needles are much more difficult than text needles.
+
+- MLLMs fail to recognize the exact number of images in the document.
+
+- Models pre-trained on image-text interleaved data do not exhibit superior performance.
+
+- Training on background documents does not boost performance on MM-NIAH.
+
+- The "Lost in the Middle" problem also exists in MLLMs.
+
+- Long context capability of LLMs is NOT retained in MLLMs.
+
+- RAG boosts Text Needle Retrieval but not Image Needle Retrieval.
+
+- Placing questions before context does NOT improve model performance.
+
+- Humans achieve near-perfect performance on MM-NIAH.
+
+
+Please see [our paper](http://arxiv.org/abs/2406.07230) for more detailed analyses.
+
 ## Experimental Results
 
 For the retrieval and reasoning tasks, we utilize Accuracy as the evaluation metric.

@@ -107,14 +107,8 @@ def main(args):
 
             result = np.divide(correct, total, out=np.zeros_like(correct), where=total != 0)
 
-        # print(result)
-        print(file_name)
-        print(total)
-        print()
-
         # # Plot a heatmap for a numpy array:
         uniform_data = result[1:].T
-        # print(uniform_data)
 
         # Define the custom color map
         from matplotlib.colors import LinearSegmentedColormap
@@ -137,9 +131,19 @@ def main(args):
         plt.savefig(file_path_pdf, dpi=300, bbox_inches='tight')
         plt.clf()
 
+        context_ranges = [f'{i // 1000}k' for i in x_bins]
+        scores = [round(item, 6) for item in uniform_data.mean(axis=0).tolist()]
         with open(file_path_txt, 'w') as file:
-            file.write(json.dumps([f'{i / 1000}k' for i in x_bins]) + '\n')
-            file.write(json.dumps([round(item, 6) for item in uniform_data.mean(axis=0).tolist()]))
+            file.write(json.dumps(context_ranges) + '\n')
+            file.write(json.dumps(scores) + '\n')
+
+        print(file_name)
+        print(f'Results are save in {file_path} and {file_path_txt}')
+        print(f'Performance for each context range:')
+        for context_range, score in zip(context_ranges, scores):
+            print(f'{context_range}: {score*100:.2f}')
+        print(f'\t')
+        print()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluation script for MM-NIAH")
