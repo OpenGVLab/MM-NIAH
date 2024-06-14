@@ -24,7 +24,7 @@ Based on our benchmark, we conducted a series of experiments. The main findings 
 
 - The most advanced MLLMs (e.g. Gemini-1.5) still struggle to comprehend multimodal documents.
 
-- Image needles are much more difficult than text needles.
+- **All MLLMs exhibit poor performance on image needles.**
 
 - MLLMs fail to recognize the exact number of images in the document.
 
