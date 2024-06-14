@@ -22,7 +22,7 @@ Please see [our paper](http://arxiv.org/abs/2406.07230) for more details.
 
 Based on our benchmark, we conducted a series of experiments. The main findings are summarized as follows:
 
-- The most advanced MLLMs (e.g. Gemini-1.5) still struggles to comprehend multimodal documents.
+- The most advanced MLLMs (e.g. Gemini-1.5) still struggle to comprehend multimodal documents.
 
 - Image needles are much more difficult than text needles.
 
