@@ -36,6 +36,7 @@ for ((i=0; i<${#model_paths[@]}; i++)); do
         task=${tasks[j]}
 
         model_name="$(basename ${model_path})"
+        echo "$(date) ${model_name}_${task}"
 
         srun -p ${PARTITION} \
             --gres=gpu:${GPUS_PER_NODE} \
