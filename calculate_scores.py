@@ -5,11 +5,15 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from collections import defaultdict
 from utils.tools import VQAEval
 
 x_bins = [1000, 2000, 4000, 8000, 12000, 16000, 24000, 32000, 40000, 48000, 64000]
 y_interval = 0.2
 vqa = VQAEval()
+
+context_ranges = [f'{i // 1000}k' for i in x_bins]
+
 
 def is_correct(answer, response):
     response_orig = response
@@ -62,24 +66,48 @@ def is_correct(answer, response):
 
     return vqa.evaluate(response, answer)
 
+def save(res, save_path):
+    res = res.copy()
+
+    overall_scores = []
+    for task_name, scores in res.items():
+        overall_scores.append(scores)
+    overall_scores = np.array(overall_scores).mean(axis=0).tolist()
+
+    if len(res) == 6:
+        res['overall'] = [round(item, 6) for item in overall_scores]
+    else:
+        print(
+            f'[Warning] Since {len(res)=} is not equal to 6, the overall score will be ignored.',
+            'Please ensure that you correctly organize the directory structure.'
+        )
+        print()
+
+    res['context_ranges'] = context_ranges
+
+    with open(save_path, 'w') as file:
+        json.dump(res, file, indent=1)
+
 def main(args):
-    os.makedirs(args.save_dir, exist_ok=True)
-    os.makedirs(f'{args.save_dir}_pdf', exist_ok=True)
-    os.makedirs(f'{args.save_dir}_txt', exist_ok=True)
+    res = defaultdict(lambda:defaultdict(dict))
 
     plt.figure(figsize=(10, 10))
     result_path_list = os.listdir(args.outputs_dir)
     for file_name in result_path_list:
+
+        jsonl_file_path = os.path.join(args.outputs_dir, file_name)
+        if os.path.isdir(jsonl_file_path):
+            continue
+
         total = np.zeros((len(x_bins) + 1, int(1 / y_interval)))
         correct = np.zeros((len(x_bins) + 1, int(1 / y_interval)))
 
-        jsonl_file_path = os.path.join(args.outputs_dir, file_name)
-        file_path = os.path.join(args.save_dir, file_name.replace('.jsonl', '.png'))
-        file_path_pdf = os.path.join(f'{args.save_dir}_pdf', file_name.replace('.jsonl', '.pdf'))
-        file_path_txt = os.path.join(f'{args.save_dir}_txt', file_name.replace('.jsonl', '.txt'))
+        model_name, task_name = file_name.replace('.jsonl', '').rsplit('_', 1)
+        file_path = os.path.join(args.save_dir, model_name, f'heatmaps_png/{task_name}.png')
+        file_path_pdf = os.path.join(args.save_dir, model_name, f'heatmaps_pdf/{task_name}.pdf')
 
-        if os.path.isdir(jsonl_file_path):
-            continue
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        os.makedirs(os.path.dirname(file_path_pdf), exist_ok=True)
 
         with open(jsonl_file_path, 'r') as file:
             for line in file:
@@ -131,19 +159,27 @@ def main(args):
         plt.savefig(file_path_pdf, dpi=300, bbox_inches='tight')
         plt.clf()
 
-        context_ranges = [f'{i // 1000}k' for i in x_bins]
         scores = [round(item, 6) for item in uniform_data.mean(axis=0).tolist()]
-        with open(file_path_txt, 'w') as file:
-            file.write(json.dumps(context_ranges) + '\n')
-            file.write(json.dumps(scores) + '\n')
 
-        print(file_name)
-        print(f'Results are save in {file_path} and {file_path_txt}')
-        print(f'Performance for each context range:')
-        for context_range, score in zip(context_ranges, scores):
-            print(f'{context_range}: {score*100:.2f}')
-        print(f'\t')
-        print()
+        match = False
+        for split in ['rag-val', 'val', 'rag-test', 'test']:
+            if task_name.endswith(split):
+                res[model_name][split][task_name] = scores
+                match = True
+                break
+        if not match:
+            raise RuntimeError(
+                f'Invalid filename: {file_name}, '
+                'please rename it in the format like {model_name}_{task}.jsonl'
+            )
+
+    for model_name in res:
+        for split in ['rag-val', 'val', 'rag-test', 'test']:
+            if len(res[model_name][split]) > 0:
+                save_path = os.path.join(args.save_dir, model_name, f'scores_{split}.json')
+                save(res[model_name][split], save_path)
+                print(f'results on {split} split of {model_name} are save in {save_path}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluation script for MM-NIAH")

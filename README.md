@@ -102,15 +102,20 @@ To submit your results to the leaderboard on MM-NIAH, please send to [this email
 Please organize the result jsonl files as follows:
 
 ```
-├── retrieval-text.jsonl
-├── counting-text.jsonl
-├── reasoning-text.jsonl
-├── retrieval-image.jsonl
-├── counting-image.jsonl
-└── reasoning-image.jsonl
+├── ${model_name}_retrieval-text-val.jsonl
+├── ${model_name}_retrieval-image-val.jsonl
+├── ${model_name}_counting-text-val.jsonl
+├── ${model_name}_counting-image-val.jsonl
+├── ${model_name}_reasoning-text-val.jsonl
+├── ${model_name}_reasoning-image-val.jsonl
+├──
+├── ${model_name}_retrieval-text-test.jsonl
+├── ${model_name}_retrieval-image-test.jsonl
+├── ${model_name}_counting-text-test.jsonl
+├── ${model_name}_counting-image-test.jsonl
+├── ${model_name}_reasoning-text-test.jsonl
+└── ${model_name}_reasoning-image-test.jsonl
 ```
-
-Please remember to include your model name in the email, specify whether the submitted results are for the validation or test split.
 
 ## Visualization
 

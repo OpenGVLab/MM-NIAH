@@ -113,13 +113,13 @@ def build_model(args):
         num_gpus_for_llm = len(visible_devices) - num_gpus_for_vit
 
         num_layers = config.llm_config.num_hidden_layers
-        num_layers_per_gpu = num_layers // num_gpus_for_llm
+        num_layers_per_gpu = num_layers // num_gpus_for_llm + 1
         for i in range(num_layers):
             device_idx = min(i // num_layers_per_gpu + num_gpus_for_vit, len(visible_devices) - 1)
             device_map[f'language_model.model.layers.{i}'] = visible_devices[device_idx]
 
         num_layers = config.vision_config.num_hidden_layers
-        num_layers_per_gpu = num_layers // num_gpus_for_vit
+        num_layers_per_gpu = num_layers // num_gpus_for_vit + 1
         for i in range(num_layers):
             device_idx = min(i // num_layers_per_gpu, num_gpus_for_vit - 1)
             device_map[f'vision_model.encoder.layers.{i}'] = visible_devices[device_idx]
@@ -255,7 +255,7 @@ def main(args):
             continue
 
         if oom_cnt >= 20:
-            print(f"Rank {args.rank} early stops because of successive failures. {oom_cnt=}")
+            print(f"[Rank {args.rank}] early stops because of successive failures. {oom_cnt=}")
             ans_file.write(json.dumps({
                 "question_id": sample['id'],
                 "question": question,
@@ -282,6 +282,7 @@ def main(args):
             pixel_values = torch.cat(pixel_values)
         else:
             pixel_values = None
+            num_patches_list = []
 
         try:
             outputs = chat(
@@ -298,13 +299,13 @@ def main(args):
             )
             oom_cnt = 0
         except torch.cuda.OutOfMemoryError:
-            print(f"Rank {args.rank} OutOfMemoryError occurs! totoal_tokens={sample['meta']['context_length']}")
+            print(f"[Rank {args.rank}] OutOfMemoryError occurs! totoal_tokens={sample['meta']['context_length']}")
             outputs = 'None'
             oom_cnt += 1
             torch.cuda.empty_cache()
 
         outputs = outputs.strip()
-        print(f"[{current_time()}] totoal_tokens={sample['meta']['context_length']}, {outputs=}")
+        print(f"[{current_time()}] [Rank {args.rank}] totoal_tokens={sample['meta']['context_length']}, {outputs=}")
 
         ans_file.write(json.dumps({
             "question_id": sample['id'],
