@@ -13,6 +13,7 @@ from torchvision.transforms.functional import InterpolationMode
 
 from utils.tools import get_input, init_dist
 
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:128'
 
 FILEPATH = 'shells/data/mm_niah.json'
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
