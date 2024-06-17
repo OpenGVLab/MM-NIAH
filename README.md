@@ -181,9 +181,9 @@ Thanks for their awesome work!
 ## Citation
 ```BibTex
 @article{wang2024needle,
-    title={Needle In A Multimodal Haystack}, 
-    author={Wang, Weiyun and Zhang, Shuibo and Ren, Yiming and Duan, Yuchen and Li, Tiantong and Liu, Shuo and Hu, Mengkang and Chen, Zhe and Zhang, Kaipeng and Lu, Lewei and Zhu, Xizhou and Luo, Ping and Qiao, Yu and Dai, Jifeng and Shao, Wenqi and Wang, Wenhai},
-    journal={arXiv preprint arXiv:2406.07230},
-    year={2024}
+  title={Needle In A Multimodal Haystack},
+  author={Wang, Weiyun and Zhang, Shuibo and Ren, Yiming and Duan, Yuchen and Li, Tiantong and Liu, Shuo and Hu, Mengkang and Chen, Zhe and Zhang, Kaipeng and Lu, Lewei and others},
+  journal={arXiv preprint arXiv:2406.07230},
+  year={2024}
 }
 ```
