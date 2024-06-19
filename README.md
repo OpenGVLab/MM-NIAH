@@ -8,7 +8,7 @@
 
 ## News🚀🚀🚀
 - `2024/06/13`: 🚀We release Needle In A Multimodal Haystack ([MM-NIAH](https://huggingface.co/OpenGVLab/MM-NIAH)), the first benchmark designed to systematically evaluate the capability of existing MLLMs to comprehend long multimodal documents.
-**Experimental results show that performance of Gemini-1.5 on tasks with image needles is no better than a random guess.**
+**Experimental results show that the performance of Gemini-1.5 on tasks involving image needles is no better than random guessing.**
 
 ## Introduction
 
