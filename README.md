@@ -3,7 +3,7 @@
 [[Project Page](https://mm-niah.github.io/)]
 [[arXiv Paper](http://arxiv.org/abs/2406.07230)]
 [[Dataset](https://huggingface.co/datasets/OpenGVLab/MM-NIAH)]
-[[Leaderboard](https://mm-niah.github.io/#leaderboard_test)]
+[[Leaderboard](https://mm-niah.github.io/#overall_test_leaderboard)]
 <!-- [[Github](https://github.com/OpenGVLab/MM-NIAH)] -->
 
 ## News🚀🚀🚀
