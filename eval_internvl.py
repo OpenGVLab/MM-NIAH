@@ -125,11 +125,16 @@ def build_model(args):
             device_idx = min(i // num_layers_per_gpu, num_gpus_for_vit - 1)
             device_map[f'vision_model.encoder.layers.{i}'] = visible_devices[device_idx]
 
-        device_map['vision_model.embeddings'] = 0
-        device_map['mlp1'] = num_gpus_for_vit - 1
-        device_map['language_model.model.tok_embeddings'] = num_gpus_for_vit
+        device_map['vision_model.embeddings'] = visible_devices[0]
+        device_map['mlp1'] = visible_devices[num_gpus_for_vit - 1]
+        # InternLM2
+        device_map['language_model.model.tok_embeddings'] = visible_devices[num_gpus_for_vit]
         device_map['language_model.model.norm'] = visible_devices[-1]
         device_map['language_model.output'] = visible_devices[-1]
+        # Qwen2
+        device_map['language_model.model.embed_tokens'] = visible_devices[num_gpus_for_vit]
+        device_map['language_model.model.norm'] = visible_devices[-1]
+        device_map['language_model.lm_head'] = visible_devices[-1]
 
     else:
         device_map = {'': visible_devices[0]}
@@ -295,7 +300,7 @@ def main(args):
                 generation_config=dict(
                     do_sample=False,
                     num_beams=1,
-                    max_new_tokens=96 if 'counting' in task else 32,
+                    max_new_tokens=32 if 'counting' in task else 16,
                 ),
             )
             oom_cnt = 0
