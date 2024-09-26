@@ -7,6 +7,7 @@
 <!-- [[Github](https://github.com/OpenGVLab/MM-NIAH)] -->
 
 ## News🚀🚀🚀
+- `2024/02/27`: MM-NIAH is accepted by NeurIPS 2024 Track Datasets and Benchmarks! 🎉
 - `2024/07/04`: 🚀We have updated the performance of [InternVL2-Pro](https://internvl.github.io/blog/2024-07-02-InternVL-2.0/) on our leaderboard and support the evaluation of InternVL2-Pro.
 - `2024/06/13`: 🚀We release Needle In A Multimodal Haystack ([MM-NIAH](https://huggingface.co/OpenGVLab/MM-NIAH)), the first benchmark designed to systematically evaluate the capability of existing MLLMs to comprehend long multimodal documents.
 **Experimental results show that the performance of Gemini-1.5 on tasks involving image needles is no better than random guessing.**
