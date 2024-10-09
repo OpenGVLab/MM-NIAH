@@ -330,9 +330,15 @@ final_score_dict = {
     'total': 0,
 }
 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--file-dir', type=str, default='')
+args = parser.parse_args()
+
 data = []
 for i in ["retrieval-image", "reasoning-image", "counting-image", "counting-text", "retrieval-text", "reasoning-text"]:
-    with open('/mnt/petrelfs/renyiming/LTT/Internvl2.5/internvl2.5_mmniah/InternVL-2.5-8B_mmniah_' + i + '.jsonl', 'r') as file:
+    with open(os.path.join(args.file_dir, 'InternVL-2.5-8B_mmniah_' + i + '.jsonl'), 'r') as file:
         for line in file:
             data.append(json.loads(line))
 
