@@ -94,6 +94,18 @@ sh shells/eval_internvl_rag.sh
 python calculate_scores.py --outputs-dir ./outputs/
 ```
 
+If you want to evaluate the model by LMDeploy, run the command to obtain the jsonl file of result in one task:
+
+```shell
+srun -p VC5 --gres=gpu:8 --ntasks=1 --ntasks-per-node=1 python ./mmniah_lmdeploy.py --file-name=retrieval-image --model-path=/path/to/your/model/ --file-dir=/path/to/MMNIAH/jsonl/dir/ --image-dir=/path/to/MMNIAH/image/dir/ --save-dir=/path/to/save/dir/
+```
+
+After obtaining all six result jsonl files, run the command to get the final test results:
+
+```shell
+python ./val_mmniah.py --file-dir /path/to/result/dir/
+```
+
 `NOTE`: Make sure that you install the [flash-attention](https://github.com/Dao-AILab/flash-attention) successfully, otherwise you will meet the torch.cuda.OutOfMemoryError.
 
 ## Leaderboard
