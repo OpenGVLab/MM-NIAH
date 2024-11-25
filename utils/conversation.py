@@ -31,6 +31,7 @@ class SeparatorStyle(IntEnum):
     CHATGLM3 = auto()
     INTERNVL_ZH = auto()
     MPT = auto()
+    BASE = auto()
 
 
 @dataclasses.dataclass
@@ -236,12 +237,25 @@ class Conversation:
                     ret += role + ':'
             return ret
         elif self.sep_style == SeparatorStyle.MPT:
-            ret = system_prompt + self.sep
+            if self.system_message == '':
+                ret = ''
+            else:
+                ret = system_prompt + self.sep
             for role, message in self.messages:
                 if message:
                     if type(message) is tuple:
                         message, _, _ = message
                     ret += role + message + self.sep
+                else:
+                    ret += role
+            return ret
+        elif self.sep_style == SeparatorStyle.BASE:
+            ret = ''
+            for role, message in self.messages:
+                if message:
+                    if type(message) is tuple:
+                        message, _, _ = message
+                    ret += role + message.rstrip() + self.sep
                 else:
                     ret += role
             return ret
@@ -737,8 +751,130 @@ register_conv_template(
         sep='<|im_end|>',
         stop_token_ids=[
             2,
+            1163,
+            92543,
+            92542,
+        ]
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='internlm2-chat-v3',
+        system_template='{system_message}',
+        system_message='',
+        roles=('<|im_start|>user\n', '<|im_start|>assistant\n'),
+        # roles=('<|im_start|>user\n', '<|im_start|>assistant\n', '<|im_start|>knowledge\n'),
+        sep_style=SeparatorStyle.MPT,
+        sep='<|im_end|>\n',
+        stop_token_ids=[
+            2,
             92543,
             92542
+        ]
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='internlm2-arbitary-system-pos',
+        system_template='',
+        system_message='',
+        roles=('user\n', 'assistant\n'),
+        sep_style=SeparatorStyle.BASE,
+        sep='<|im_end|>',
+        stop_token_ids=[
+            2,
+            1163,
+            92543,
+            92542
+        ]
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='internlm2-base',
+        system_template='',
+        system_message='',
+        roles=('', ''),
+        sep_style=SeparatorStyle.BASE,
+        sep='<|im_end|>',
+        stop_token_ids=[
+            2,
+            1163,
+            92543,
+            92542
+        ]
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='internlm2-plain',
+        system_template='',
+        system_message='',
+        roles=('', ''),
+        sep_style=SeparatorStyle.BASE,
+        sep='<|im_end|>',
+        stop_token_ids=[
+            2,
+            1163,
+            92543,
+            92542
+        ]
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='Hermes-2-base',
+        system_template='',
+        system_message='',
+        roles=('', ''),
+        sep_style=SeparatorStyle.BASE,
+        sep='<|im_end|>',
+        stop_token_ids=[
+            2,
+            6,
+            7,
+            8,
+        ],  # "<|endoftext|>", "<|im_start|>", "<|im_end|>", "<|im_sep|>"
+        stop_str='<|endoftext|>',
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='internlm2-base-allloss',
+        system_template='',
+        system_message='',
+        roles=('', ''),
+        sep_style=SeparatorStyle.BASE,
+        sep='<|im_end|>',
+        stop_token_ids=[
+            2,
+            1163,
+            92543,
+            92542
+        ]
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name='internlm2-basev0',
+        system_template='<|im_start|>system\n{system_message}',
+        system_message='你是由上海人工智能实验室联合商汤科技开发的书生多模态大模型，英文名叫InternVL, 是一个有用无害的人工智能助手。',
+        roles=('<|im_start|>user\n', '<|im_start|>assistant\n'),
+        sep_style=SeparatorStyle.MPT,
+        sep='[UNUSED_TOKEN_1]', # 从这个token开始后面那群embedding完全一样
+        stop_token_ids=[
+            2,
+            1163,
+            92543,
+            92542,
+            92398, # tokenizer.convert_tokens_to_ids('[UNUSED_TOKEN_1]')
         ]
     )
 )
@@ -1274,6 +1410,18 @@ register_conv_template(
         sep_style=SeparatorStyle.INTERNVL_ZH,
         sep=' ',
         sep2='</s>',
+    )
+)
+
+
+register_conv_template(
+    Conversation(
+        name='internvl2_5',
+        system_template='<|im_start|>system\n{system_message}',
+        system_message='你是书生·万象，英文名是InternVL，是由上海人工智能实验室、清华大学及多家合作单位联合开发的多模态大语言模型。',
+        roles=('<|im_start|>user\n', '<|im_start|>assistant\n'),
+        sep_style=SeparatorStyle.MPT,
+        sep='<|im_end|>\n',
     )
 )
 

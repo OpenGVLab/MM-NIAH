@@ -2,8 +2,13 @@ import re
 import os
 import torch
 import subprocess
+from lmdeploy.model import MODELS, BaseChatTemplate
+from lmdeploy import ChatTemplateConfig
+from utils.conversation import get_conv_template, SeparatorStyle
+
 
 IMAGE_PLACEHOLDER = '<image>'
+
 
 def has_word(sentence, word):
     pattern = r"\b" + re.escape(word) + r"\b"
@@ -40,6 +45,41 @@ def init_dist(args):
         world_size=args.world_size,
     )
     torch.cuda.set_device(args.local_rank)
+
+
+def ConvertLMDeployChatTemplate(conv_name):
+    template = get_conv_template(conv_name)
+    if template.sep_style == SeparatorStyle.BASE:
+        json_data = {
+            "model_name": "eval_customized_model",
+            "system": '',
+            "meta_instruction": '',
+            "eosys": '',
+            "user": template.roles[0],
+            "eoh": template.sep,
+            "assistant": template.roles[1],
+            "eoa": template.sep,
+            "separator": "",
+            "capability": "chat",
+            "stop_words": [template.sep]
+            }
+    else:
+        json_data = {
+            "model_name": "eval_customized_model",
+            "system": template.system_template.replace('{system_message}', ''),
+            "meta_instruction": template.system_message,
+            "eosys": template.sep,
+            "user": template.roles[0],
+            "eoh": template.sep,
+            "assistant": template.roles[1],
+            "eoa": template.sep,
+            "separator": "",
+            "capability": "chat",
+            "stop_words": [template.sep]
+            }
+    assert json_data['model_name'] not in MODELS.module_dict.keys()
+    MODELS.register_module(json_data['model_name'], module=BaseChatTemplate)
+    return ChatTemplateConfig(**json_data)
 
 
 class VQAEval:
